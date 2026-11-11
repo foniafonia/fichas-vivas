@@ -629,7 +629,7 @@ document.querySelectorAll('[data-imp]').forEach(function (b) { b.addEventListene
 function imprime(tipo) {
   var cs = FV.cartas(); if (!cs.length) return; cuenta('imprimir_' + tipo);
   var css = '@page{size:A4;margin:10mm}body{font-family:Nunito,system-ui,sans-serif;margin:0;color:#10231A}h1{font-size:18px;margin:0 0 6px}.g{display:grid;gap:4mm}.c{border:1.5px dashed #888;border-radius:4mm;padding:3mm;display:flex;flex-direction:column;align-items:center;justify-content:center;break-inside:avoid;text-align:center}.c img{max-width:100%;max-height:100%;object-fit:contain}.p{font-weight:800}.pie{font-size:9px;color:#666;margin-top:4mm;text-align:center}.b{border:2px solid #0E3524;border-radius:4mm;padding:3mm;break-inside:avoid;margin-bottom:6mm}.b .g{grid-template-columns:repeat(3,1fr)}.b .c{height:38mm;border-style:solid}table{border-collapse:collapse;width:100%;font-size:13px}td,th{border:1px solid #999;padding:5px}';
-  var pie = '<p class="pie">Fichas vivas · ColmenIA (www.skool.com/logopedia-7339) · Material de apoyo</p>', h = '';
+  var pie = '<p class="pie">Fichas vivas · ColmenIA (www.skool.com/logopedia-7339) · con #ponunlogopedaentuvida · Material de apoyo</p>', h = '';
   var img = function (c) { return c.img || c.pimg || ''; };
   var pal = function (c) { return esc(FV.textoCarta(c)); };
   if (tipo === 'tarjetas') {

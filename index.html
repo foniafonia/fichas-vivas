@@ -157,6 +157,12 @@ select,input[type=text],input[type=number],textarea{border:2px solid var(--linea
 #aireCursor svg{position:absolute;inset:-6px;width:58px;height:58px;transform:rotate(-90deg)}
 #aireEstado{position:fixed;left:10px;bottom:150px;z-index:95;background:var(--noche);color:#fff;border-radius:10px;padding:4px 10px;font-size:13px}
 .aire-on .carta,.aire-on .btn,.aire-on .zona,.aire-on .caja-cat{min-height:64px}
+.pon{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;background:#fff;border:5px solid #E8336D;border-radius:20px;padding:14px;margin:6px 0 18px;box-shadow:var(--sombra)}
+.pon img{width:120px;height:120px;object-fit:cover;border-radius:12px}
+.pon-tag{font-weight:900;font-size:clamp(20px,3.4vw,30px);color:#111;letter-spacing:-.5px;word-break:break-word}
+.pon-tag span{color:#E8336D}
+.pon p{margin:4px 0 0;color:#28463a}
+@media(max-width:560px){.pon{grid-template-columns:1fr}.pon img{width:100%;height:auto;max-height:260px}}
 .pie{margin-top:30px;font-size:13px;color:var(--suave);text-align:center}
 .paso{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--noche);color:#fff;align-items:center;justify-content:center;font-weight:900;margin-right:6px}
 @media print{body *{visibility:hidden}}
@@ -190,6 +196,14 @@ select,input[type=text],input[type=number],textarea{border:2px solid var(--linea
     <div class="muestra" id="muestra"></div>
   </div>
 
+  <div class="pon">
+    <img src="img/ponunlogopeda.jpg" alt="#ponunlogopedaentuvida" onerror="this.remove()">
+    <div>
+      <div class="pon-tag">#ponun<span>logopeda</span>entuvida</div>
+      <p>Creado junto a <b>Almudena</b>, de #ponunlogopedaentuvida, con su material de mascotas y aseo. Lo pidió porque tenía muchísimo que recortar; ahora se juega de 16 maneras.</p>
+    </div>
+  </div>
+
   <h2>Elige el material de ejemplo</h2>
   <div class="cajas" id="demos"></div>
 
@@ -203,7 +217,7 @@ select,input[type=text],input[type=number],textarea{border:2px solid var(--linea
 
   <div class="puente">
     <img src="img/colmenia-logo.webp" alt="">
-    <div><b style="font-size:20px">Esta herramienta nació de una petición</b><p>Una compañera logopeda tenía mucho material para recortar. En ColmenIA, la comunidad de logopedas, funciona así: cada uno cuenta lo que necesita, se hace, se comparte y entre todos se mejora.</p></div>
+    <div><b style="font-size:20px">Esta herramienta nació de una petición</b><p>Almudena, de #ponunlogopedaentuvida, tenía mucho material para recortar. En ColmenIA, la comunidad de logopedas, funciona así: cada uno cuenta lo que necesita, se hace, se comparte y entre todos se mejora.</p></div>
     <a class="btn oro" data-sk="portada" target="_blank" rel="noopener">Entrar en ColmenIA</a>
   </div>
   <p class="pie">Fichas vivas · Hecho en ColmenIA · Gabinete Fönia (Melilla). Herramienta de apoyo: no sustituye la valoración ni la intervención de una logopeda.</p>
