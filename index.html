@@ -173,6 +173,22 @@ select,input[type=text],input[type=number],textarea{border:2px solid var(--linea
 .pon-tag span{color:#E8336D}
 .pon p{margin:4px 0 0;color:#28463a}
 @media(max-width:560px){.pon{grid-template-columns:1fr}.pon img{width:100%;height:auto;max-height:260px}}
+.proximo{margin:26px 0 8px}
+.prox-hist{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;background:linear-gradient(135deg,#0E3524,#1E5B3E);color:#fff;border-radius:22px;padding:20px;box-shadow:var(--sombra)}
+.prox-hist .ico{font-size:52px;line-height:1}
+.prox-hist h3{font-size:24px;margin:0 0 6px;color:#fff}
+.prox-hist p{margin:0 0 10px;color:#DCEBE1}
+.prox-hist ol{margin:0 0 12px;padding-left:22px;color:#fff}
+.prox-et{display:inline-block;background:#F2B33D;color:#0E3524;font-weight:900;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 10px;margin-bottom:8px}
+.prox-g{margin:16px 0 6px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--suave)}
+.prox-l{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.prox-c{position:relative;background:#fff;border:2px dashed var(--linea);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.prox-c .ico{font-size:26px;filter:grayscale(.35)}
+.prox-c b{font-size:16px}
+.prox-c span{font-size:14px;color:#4d6457}
+.prox-c .cand{position:absolute;top:10px;right:10px;font-size:12px;font-weight:800;color:var(--suave)}
+.prox-c button{align-self:flex-start;margin-top:auto}
+.prox-c button[aria-pressed="true"]{background:var(--verde);color:#fff;border-color:var(--verde)}
 .pie{margin-top:30px;font-size:13px;color:var(--suave);text-align:center}
 .paso{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--noche);color:#fff;align-items:center;justify-content:center;font-weight:900;margin-right:6px}
 @media print{body *{visibility:hidden}}
@@ -359,6 +375,8 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
   <h2>Elige el material de ejemplo</h2>
   <div class="cajas" id="demos"></div>
 
+  <div class="proximo" data-prox="p"></div>
+
   <h2>Cómo funciona</h2>
   <div class="cajas">
     <div class="caja"><span class="paso">1</span><b>Sube tus hojas</b><p class="nota">Una hoja de dibujos o fotos en cuadrícula, y si quieres la de palabras. También PDF, fotos sueltas o una foto hecha con la tableta.</p></div>
@@ -402,6 +420,7 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
     </div>
   </details>
   <div class="cajas" id="listaJuegos" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+  <div class="proximo" data-prox="j"></div>
   <h2>Imprimir (si aun así quieres papel)</h2>
   <div class="fila">
     <button class="btn sec" data-imp="tarjetas" type="button">🃏 Tarjetas imagen + palabra</button>

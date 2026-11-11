@@ -55,6 +55,46 @@ var FV_DEMOS = [
   { id: 'demo-todo', titulo: 'Mascotas y aseo', desc: 'Las 32 cartas juntas: ideal para Clasifica y El intruso.', partes: ['masc', 'aseo'] }
 ];
 
+/* PRÓXIMAMENTE: se enseñan bloqueados, con voto «Lo quiero». Lista de Melífera (11-nov). */
+var FV_HISTORIA = {
+  t: 'Modo historia', ico: '🧭',
+  d: 'Una evaluación inicial corta mide lo que ya domina (comprensión, vocabulario, memoria auditiva, atención, categorías, sonidos) y genera un camino paso a paso con tu propio material. Cada paso se desbloquea solo cuando se supera el anterior, y el informe enseña el avance.',
+  pasos: ['Evaluación inicial de capacidades (5 minutos, jugando)', 'Camino a medida: qué juego, con qué cartas y con qué ayuda', 'Avanza solo al superar cada paso; si cuesta, baja un escalón', 'Informe de evolución para la familia o el equipo']
+};
+var FV_PROXIMO = [
+  ['A', 'sino', '✅', '¿Sí o no?', 'Sale una carta y se oye «¿Es un gato?». Se toca sí o no.'],
+  ['A', 'noes', '🚫', 'Toca la que NO es', 'Comprensión de frases negativas.'],
+  ['A', 'articulos', '🚪', 'El, la, los, las', 'Cada carta entra por la puerta de su artículo.'],
+  ['A', 'dobble', '👀', 'Encuentra la pareja', 'Dos cartas con muchos dibujos: solo uno se repite.'],
+  ['A', 'duelo', '⚔️', 'Duelo de dos', 'Dos niños en la misma tableta: gana quien toca antes.'],
+  ['A', 'frase', '💬', 'Haz una frase', 'Salen dos o tres cartas y hay que decir una frase con todas.'],
+  ['A', 'ruletafrases', '🎰', 'Ruleta de frases', 'Tres rodillos: quién, cuándo y una carta.'],
+  ['A', 'simon', '🔁', 'Repite la serie', 'Se encienden 2, 3, 4… cartas y se tocan en el mismo orden.'],
+  ['A', 'paratoca', '✋', 'Para o toca', 'Solo se toca cuando sale la carta dicha: control de impulsos.'],
+  ['A', 'linterna', '🔦', 'La linterna', 'Pantalla a oscuras: se busca la carta con una linterna.'],
+  ['A', 'corta', '✂️', 'Corta las que son de…', 'Saltan cartas y se cortan solo las de una categoría.'],
+  ['A', 'serpiente', '🐍', 'La serpiente come', 'Una serpiente se come solo las cartas de la categoría dicha.'],
+  ['A', 'vuela', '🐝', 'Vuela y recoge', 'Una abeja recoge la carta que se ha dicho.'],
+  ['A', 'muro', '🧱', 'Rompe el muro', 'Hay que romper el ladrillo de la carta dicha.'],
+  ['A', 'crush', '💎', 'Crush de dibujos', 'Se juntan tres iguales y suena la palabra.'],
+  ['A', 'cuerda', '🪢', 'Tira de la cuerda', 'Dos equipos: cada acierto tira de la cuerda.'],
+  ['B', 'palmas', '👏', 'Palmas por sílabas', 'Una palmada por cada sílaba de la carta.'],
+  ['B', 'sonido', '🔤', '¿Por qué sonido empieza?', 'Lotería por el primer sonido.'],
+  ['B', 'completa', '🧩', 'Completa la palabra', 'Dibujo y palabra con un hueco: vocal, consonante o sílaba.'],
+  ['B', 'arma', '🏗️', 'Arma la palabra', 'Las sílabas revueltas se ponen en orden.'],
+  ['B', 'rimas', '🎵', 'Rimas', '¿Cuál termina como…?'],
+  ['C', 'oca', '🎲', 'La oca de mis cartas', 'Al caer en una casilla se dice la palabra.'],
+  ['C', 'parchis', '🟡', 'Parchís de mis cartas', 'Una pregunta en cada casilla.'],
+  ['C', 'domino', '🁫', 'Dominó de mis cartas', 'Se encadenan dibujos y palabras.'],
+  ['C', 'raya', '🔴', 'Cuatro en raya', 'Para poner ficha hay que decir la carta.'],
+  ['D', 'historia', '📚', 'Ordena la historia', 'Las cartas de una rutina, en orden.'],
+  ['D', 'cuento', '📖', 'Cuento con mis cartas', 'Una frase o un cuento con las cartas como pictos.'],
+  ['D', 'cuantos', '🔢', '¿Cuántos hay?', 'Contar cuántas veces sale la carta.'],
+  ['D', 'tienda', '🛒', 'La tienda', 'Cada carta tiene precio y se paga con monedas.'],
+  ['E', 'airesilabas', '🙌', 'Palabras en el aire', 'Construir la palabra con las sílabas moviendo la mano.']
+];
+var FV_PROX_GRUPOS = { A: 'Con dibujo y palabra', B: 'Sílabas y sonidos', C: 'Juegos de mesa', D: 'Lenguaje y comprensión', E: 'Modo aire' };
+
 /* Frases con voz Ximena (demo/voz/f-<clave>.mp3). El texto también sirve de respaldo. */
 var FV_FRASES = {
   eso_es: '¡Eso es!',
