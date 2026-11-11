@@ -9,6 +9,7 @@ function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function
 function baraja(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 FV.$ = $; FV.esc = esc; FV.baraja = baraja; FV.uid = uid;
+FV.adivinaArt = function (t) { return adivinaArt(t); }; FV.marcaCambio = function () { marcaCambio(); }; FV.pintaEditor = function () { pintaEditor(); };
 
 /* ===================== Contadores (abacus) ===================== */
 var Q = new URLSearchParams(location.search);
@@ -450,7 +451,7 @@ function exporta(s) {
 }
 function valida(o) {
   if (!o || o.fv !== 1 || !o.set || !Array.isArray(o.set.cartas)) return null;
-  var okImg = function (u) { return typeof u === 'string' && (/^data:image\/(png|jpe?g|webp|gif);base64,/.test(u) || /^demo\/[a-z0-9\-]+\.webp$/.test(u)) ? u : undefined; };
+  var okImg = function (u) { return typeof u === 'string' && (/^data:image\/(png|jpe?g|webp|gif);base64,/.test(u) || /^demo\/[a-z0-9\-]+\.webp$/.test(u) || /^pictos\/[a-z0-9_]+\.webp$/.test(u)) ? u : undefined; };
   var okAud = function (u) { return typeof u === 'string' && /^data:audio\/[a-z0-9.+;=\-]+;base64,/.test(u) ? u : undefined; };
   var okVoz = function (u) { return typeof u === 'string' && /^demo\/voz\/[a-z]\d\d$/.test(u) ? u : undefined; };
   var txt = function (t, n) { return String(t == null ? '' : t).slice(0, n || 80); };
@@ -690,7 +691,7 @@ function imprime(tipo) {
 /* ===================== Abeja: mejoras, novedades y fallos ===================== */
 (function () {
   var m = $('mejora'), ok = $('mejOk');
-  var CHIPS = [['juegos', 'Más juegos'], ['frases', 'Construir frases'], ['fonemas', 'Juegos por sonidos'], ['aire', 'Mejorar el modo aire'], ['voz', 'Más voces'], ['adultos', 'Más para adultos'], ['imprimir', 'Más cosas para imprimir'], ['nube', 'Guardar en la nube'], ['compartir', 'Banco de material compartido']];
+  var CHIPS = [['juegos', 'Más juegos'], ['frases', 'Construir frases'], ['fonemas', 'Juegos por sonidos'], ['aire', 'Mejorar el modo aire'], ['voz', 'Más voces'], ['adultos', 'Más para adultos'], ['imprimir', 'Más cosas para imprimir'], ['nube', 'Guardar en la nube'], ['compartir', 'Banco de material compartido'], ['pictos', 'El banco entero de pictos']];
   $('mejChips').innerHTML = CHIPS.map(function (c) { return '<button class="chip" type="button" data-m="' + c[0] + '" aria-pressed="false">' + c[1] + '</button>'; }).join('');
   $('novLista').innerHTML = FV_NOVEDADES.slice().reverse().map(function (n) { return '<li><b>' + esc(n.f) + ' · ' + esc(n.t) + '.</b> ' + esc(n.d) + '</li>'; }).join('');
   var visto = 0; try { visto = +localStorage.getItem('fv-nov-visto') || 0; } catch (e) {}
@@ -699,6 +700,7 @@ function imprime(tipo) {
   m.querySelector('.pest').addEventListener('click', function (e) { var b = e.target.closest('[data-p]'); if (b) pest(b.dataset.p); });
   function abre() { m.classList.remove('oculto'); ok.textContent = ''; cuenta('mejora_abrir'); pest(visto < FV_VERSION ? 'nov' : 'pide'); }
   $('abeja').addEventListener('click', abre);
+  FV.abreAbeja = function (msg) { abre(); pest('pide'); if (msg) ok.textContent = msg; };
   $('mejX').addEventListener('click', function () { m.classList.add('oculto'); });
   m.addEventListener('click', function (e) { if (e.target === m) m.classList.add('oculto'); });
   $('mejChips').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b || b.getAttribute('aria-pressed') === 'true') return; b.setAttribute('aria-pressed', 'true'); cuenta('mejora_' + b.dataset.m); cuenta('mejora_total'); ok.textContent = 'Voto sumado. Lo más votado es lo siguiente que hacemos.'; });

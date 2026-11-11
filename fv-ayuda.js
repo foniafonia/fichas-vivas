@@ -22,7 +22,8 @@ var PREG = [
   ['¿Cómo imprimo o se lo paso a una compañera?', 'En «Imprimir» salen las tarjetas y los cartones de bingo. Con «Exportar» guardas un archivo; tu compañera lo abre con «Importar».', 5],
   ['¿Cómo veo cómo va cada persona?', 'Crea un perfil con un código (P-01), nunca con su nombre. Cada partida se apunta y el informe enseña aciertos, tiempos y ayudas. Se puede descargar.', 6],
   ['¿Dónde se guarda lo que hago?', 'En este navegador, y no sale de este aparato. El material se pasa a otro aparato con «Exportar»; los perfiles, con la copia de seguridad.', 0],
-  ['¿Cómo hago una copia de seguridad de mis pacientes?', 'En «Perfil» pulsa «Guardar copia»: se descarga un archivo con todos los perfiles y sus sesiones, sin nombres. Guárdalo en tu ordenador o tu nube. Si cambias de tablet o se borra el navegador, pulsa «Recuperar copia» y elige ese archivo. Cada 5 sesiones te lo recordamos. Próximamente habrá guardado online opcional.', 6]
+  ['¿Cómo hago una copia de seguridad de mis pacientes?', 'En «Perfil» pulsa «Guardar copia»: se descarga un archivo con todos los perfiles y sus sesiones, sin nombres. Guárdalo en tu ordenador o tu nube. Si cambias de tablet o se borra el navegador, pulsa «Recuperar copia» y elige ese archivo. Cada 5 sesiones te lo recordamos. Próximamente habrá guardado online opcional.', 6],
+  ['¿Puedo usar pictogramas?', 'Sí: en la portada está el «Banco de pictos ColmenIA», con 40 listos para jugar (animales, comida, ropa, acciones y emociones). Para mezclarlos con tus hojas, en «Editar material» pulsa «Pictos del banco». El banco entero tiene 889: si lo quieres, pídelo con la abeja.', 0]
 ];
 var CLAVES = [
   'empiezo empezar inicio primero probar ejemplo funciona',
@@ -34,7 +35,8 @@ var CLAVES = [
   'imprimir papel tarjetas bingo cartones compartir pasar companera exportar importar archivo',
   'perfil perfiles informe progreso resultados medir aciertos evolucion paciente codigo registro',
   'guardar guarda datos privacidad borrar aparato navegador movil',
-  'copia seguridad backup perder perdido recuperar pacientes nube online tablet cambiar'
+  'copia seguridad backup perder perdido recuperar pacientes nube online tablet cambiar',
+  'picto pictos pictograma pictogramas banco dibujos arasaac imagenes'
 ];
 function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9ñ ]/g, ' '); }
 function busca(t) {

@@ -1,9 +1,10 @@
 /* Fichas vivas · datos del material de ejemplo, frases con voz y novedades.
    Material de ejemplo: hojas de una compañera logopeda (mascotas y aseo), cortadas
    en cartas. Voz: Ximena (Microsoft, es-ES-XimenaNeural) en demo/voz. */
-var FV_VERSION = 3;
+var FV_VERSION = 4;
 
 var FV_NOVEDADES = [
+  { v: 4, f: '11 nov 2026', t: 'Banco de pictos ColmenIA', d: '40 pictogramas propios para jugar ya (animales, comida, ropa, acciones y emociones) o añadir a tu material. El banco entero tiene 889: si lo quieres, pídelo con la abeja.' },
   { v: 3, f: '11 nov 2026', t: 'Ayuda, vídeos y copia de seguridad', d: 'Botón «Ayuda» con preguntas y 6 vídeos de un minuto. En «Perfiles», copia de seguridad: guarda en un archivo todos los perfiles y sus sesiones, y recupéralos en otro aparato. Próximamente: guardado online opcional para tenerlo en todos tus aparatos.' },
   { v: 2, f: '11 nov 2026', t: 'Más material de Almudena', d: 'Sonido /k/ con dos escenas, el cuerpo humano (cara, cuerpo y por dentro), el pelo, la piel y razas de perro. Máscaras para niños y para adultos. Videotutoriales.' },
   { v: 1, f: '11 nov 2026', t: 'Primera versión', d: 'Subir hojas en cuadrícula y PDF, corte automático, 15 juegos, escenas con zonas, grabar tu voz, modo aire con la mano, bingo y tarjetas para imprimir, exportar para compartir.' }
@@ -146,3 +147,9 @@ function fvPrimeraSilaba(w) {
   else quedan = INS.indexOf(uni.slice(-2).join('')) > -1 ? uni.length - 2 : uni.length - 1;
   return w.slice(0, fin) + uni.slice(0, quedan).join('');
 }
+
+/* BANCO DE PICTOS COLMENIA: pictogramas propios de Fönia (los de Comunica). En el prototipo
+   van 40 abiertos; el banco entero (889) se enseña bloqueado y se pide con la abeja. */
+var FV_PICTOS = [["ballena", "ballena", "Animales"], ["ardilla", "ardilla", "Animales"], ["burro", "burro", "Animales"], ["caballo", "caballo", "Animales"], ["cabra", "cabra", "Animales"], ["arana", "araña", "Animales"], ["gallina", "gallina", "Animales"], ["vaca", "vaca", "Animales"], ["agua", "agua", "Comida"], ["aceituna", "aceituna", "Comida"], ["brocoli", "brócoli", "Comida"], ["calabaza", "calabaza", "Comida"], ["berenjena", "berenjena", "Comida"], ["cafe", "café", "Comida"], ["manzana", "manzana", "Comida"], ["platano", "plátano", "Comida"], ["abrigo", "abrigo", "Ropa"], ["banador", "bañador", "Ropa"], ["bota", "bota", "Ropa"], ["bufanda", "bufanda", "Ropa"], ["calcetin", "calcetín", "Ropa"], ["camisa", "camisa", "Ropa"], ["camiseta", "camiseta", "Ropa"], ["pantalon", "pantalón", "Ropa"], ["beber", "beber", "Acciones"], ["bailar", "bailar", "Acciones"], ["correr", "correr", "Acciones"], ["dormir", "dormir", "Acciones"], ["leer", "leer", "Acciones"], ["nadar", "nadar", "Acciones"], ["cantar", "cantar", "Acciones"], ["escribir", "escribir", "Acciones"], ["contento", "contento", "Emociones"], ["triste", "triste", "Emociones"], ["enfadado", "enfadado", "Emociones"], ["asustado", "asustado", "Emociones"], ["cansado", "cansado", "Emociones"], ["tranquilo", "tranquilo", "Emociones"], ["miedo", "miedo", "Emociones"], ["alegria", "alegría", "Emociones"]];
+var FV_PICTOS_TOTAL = 889;
+var FV_PICTOS_MAS = ['cocina', 'playa', 'parque', 'ir al médico', 'lavar las manos', 'despertarse', 'ambulancia', 'autobús', 'cumpleaños', 'abuelo', 'cepillo de dientes', 'me gusta', 'tengo sueño', 'piscina', 'merendar', 'avión'];
