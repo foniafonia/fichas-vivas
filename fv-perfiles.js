@@ -84,7 +84,7 @@ FV.METRICAS = [
   { id: 'vis', area: 'Percepción y memoria visual', nombre: 'Sombras, ¿Qué se esconde?, ¿Qué falta? y Memoria', calc: function (A) { var t = []; ['sombras', 'detective', 'falta', 'memoria', 'memoriap'].forEach(function (k) { var o = A.porJuego[k]; if (o) t.push(nomJ(k) + ' ' + o.ok1 + ' %'); }); return t.length ? t.join(' · ') : null; } },
   { id: 'err', area: 'Tipo de error', nombre: 'Misma categoría / suena parecido / otra', calc: function (A) { var t = A.tipos; return A.nErr ? 'misma categoría ' + pct(t.categoria, A.nErr) + ' % · suena parecido ' + pct(t.parecida, A.nErr) + ' % · otra ' + pct(t.otra, A.nErr) + ' %' : null; } },
   { id: 'ayuda', area: 'Necesidad de apoyo', nombre: 'Objetivos que necesitaron ayuda', calc: function (A) { return A.nI ? pct(A.conAyuda, A.nI) + ' % (' + A.conAyuda + ' de ' + A.nI + ')' : null; } },
-  { id: 'aprend', area: 'Aprendizaje', nombre: 'Evolución entre la primera y la última sesión', calc: function (A) { var p = A.porSes; if (p.length < 2) return 'hacen falta al menos 2 sesiones'; var a = p[0], b = p[p.length - 1]; return 'aciertos ' + a.ok1 + ' % → ' + b.ok1 + ' % · tiempo ' + seg(a.med) + ' → ' + seg(b.med); } }
+  { id: 'aprend', area: 'Aprendizaje', nombre: 'Evolución entre la primera y la última sesión', calc: function (A) { var p = A.porSes.filter(function (x) { return x.n && x.ok1 != null; }); if (p.length < 2) return 'hacen falta al menos 2 sesiones con respuestas'; var a = p[0], b = p[p.length - 1]; return 'aciertos ' + a.ok1 + ' % → ' + b.ok1 + ' % · tiempo ' + seg(a.med) + ' → ' + seg(b.med); } }
 ];
 
 function analiza(p) {
