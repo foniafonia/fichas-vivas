@@ -10,6 +10,13 @@
 <meta property="og:image" content="https://foniafonia.github.io/fichas-vivas/img/portada.jpg">
 <meta name="theme-color" content="#0E3524">
 <meta name="robots" content="noindex">
+<script>
+(function () {
+  var publico = null;
+  try { publico = localStorage.getItem('fv-publico'); } catch (e) {}
+  if (publico === 'ninos' || publico === 'adultos') document.documentElement.className = 'publico-' + publico;
+}());
+</script>
 <link rel="icon" href="img/colmenia-logo.webp">
 <style>
 :root{--noche:#0E3524;--verde:#2FA866;--verde2:#1E7B4B;--oro:#F2B33D;--crema:#FFF8EA;--tinta:#10231A;--suave:#4d6457;--linea:#E3D9C2;--rojo:#D9534F;--blanco:#fff;--sombra:0 4px 14px rgba(14,53,36,.14)}
@@ -166,6 +173,46 @@ select,input[type=text],input[type=number],textarea{border:2px solid var(--linea
 .pie{margin-top:30px;font-size:13px;color:var(--suave);text-align:center}
 .paso{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--noche);color:#fff;align-items:center;justify-content:center;font-weight:900;margin-right:6px}
 @media print{body *{visibility:hidden}}
+/* =========================================================
+   Máscaras de público · se mantienen intactas las clases de juego
+   ========================================================= */
+html,body{min-height:100%}
+body{background:var(--crema);transition:background-color .2s,color .2s}
+.cab{position:sticky;top:0;z-index:40;box-shadow:0 2px 14px rgba(14,53,36,.16)}
+.envoltura{padding-top:26px}
+.hero{background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,248,234,.2));border:1px solid rgba(227,217,194,.8);border-radius:28px;padding:28px;box-shadow:0 12px 30px rgba(14,53,36,.08)}
+.hero h1{letter-spacing:-.04em}
+.caja,.juego-t,details.ajustes{box-shadow:0 8px 22px rgba(14,53,36,.08);border-color:#e7dfce}
+.caja,.juego-t{transition:transform .18s,box-shadow .18s,border-color .18s}
+.caja:hover,.juego-t:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(14,53,36,.13)}
+.selector-publico{position:fixed;inset:0;z-index:120;background:rgba(10,42,28,.82);display:flex;align-items:center;justify-content:center;padding:18px}
+.selector-publico.oculto{display:none}
+.selector-panel{width:min(760px,100%);background:var(--crema);border:3px solid var(--oro);border-radius:30px;padding:clamp(24px,5vw,48px);box-shadow:0 24px 70px rgba(0,0,0,.26);text-align:center}
+.selector-panel h1{font-size:clamp(30px,6vw,52px);margin-bottom:10px}
+.selector-panel p{max-width:520px;margin:0 auto 24px;color:var(--suave)}
+.selector-opciones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.selector-opcion{border:3px solid var(--noche);background:#fff;border-radius:22px;padding:24px 16px;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--noche);font-weight:800;box-shadow:0 4px 0 rgba(14,53,36,.14);transition:transform .18s,background .18s,border-color .18s}
+.selector-opcion:hover,.selector-opcion:focus-visible{transform:translateY(-3px);background:#f5fbf7;border-color:var(--verde)}
+.selector-opcion:focus-visible{outline:4px solid var(--oro);outline-offset:3px}
+.selector-opcion .sel-icon{font-size:42px;line-height:1}
+.selector-opcion .sel-t{font-size:24px}
+.selector-opcion .sel-s{font-size:15px;font-weight:600;color:var(--suave)}
+.publico-adultos body{}
+body.tema-adultos,html.publico-adultos body{--crema:#F4F6F8;--tinta:#192B35;--suave:#52636B;--linea:#D5DEE1;--noche:#173D32;--verde:#277A58;--verde2:#1E6247;--oro:#D8A63A;--sombra:0 5px 18px rgba(25,43,53,.1);font-family:"Atkinson Hyperlegible","Inter",system-ui,-apple-system,"Segoe UI",sans-serif}
+body.tema-adultos .cab,html.publico-adultos body .cab{background:#173D32;padding-top:12px;padding-bottom:12px}
+body.tema-adultos .hero,html.publico-adultos body .hero{background:#fff;border-radius:18px;border-color:#dfe7e7;padding:32px}
+body.tema-adultos h1,html.publico-adultos body h1{letter-spacing:-.025em}
+body.tema-adultos .caja,body.tema-adultos .juego-t,body.tema-adultos details.ajustes,html.publico-adultos body .caja,html.publico-adultos body .juego-t,html.publico-adultos body details.ajustes{border-radius:14px;box-shadow:0 5px 18px rgba(25,43,53,.08)}
+body.tema-adultos .juego-t,html.publico-adultos body .juego-t{min-height:168px;padding:20px}
+body.tema-adultos .juego-t .ico,html.publico-adultos body .juego-t .ico{font-size:26px;filter:grayscale(1)}
+body.tema-adultos .puente,html.publico-adultos body .puente{border-radius:16px;background:#173D32}
+body.tema-adultos .confeti,html.publico-adultos body .confeti{display:none}
+body.tema-adultos .carta,html.publico-adultos body .carta{border-radius:14px;border-width:2px}
+body.tema-adultos .consigna,html.publico-adultos body .consigna{font-size:clamp(25px,3.8vw,38px)}
+body.tema-adultos .nota,html.publico-adultos body .nota{font-size:15px}
+body.tema-ninos .selector-opcion.ninos,.publico-ninos .selector-opcion.ninos{background:#fff8ea}
+body.tema-ninos .selector-opcion.adultos,.publico-ninos .selector-opcion.adultos{background:#f5fbf7}
+@media(max-width:560px){.selector-opciones{grid-template-columns:1fr}.selector-opcion{min-height:132px;padding:16px}.selector-opcion .sel-icon{font-size:34px}.selector-opcion .sel-t{font-size:22px}.hero{padding:20px;border-radius:22px}}
 </style>
 </head>
 <body>
@@ -175,9 +222,21 @@ select,input[type=text],input[type=number],textarea{border:2px solid var(--linea
   <div class="der">
     <button class="btn cab-btn" data-ir="inicio" type="button">Inicio</button>
     <button class="btn cab-btn" data-ir="biblioteca" type="button">Mi material</button>
+    <button class="btn cab-btn" id="btnPublico" type="button" aria-haspopup="dialog">👤 Niños / Adultos</button>
     <button class="btn cab-btn" id="btnAire" type="button" aria-pressed="false">✋ Modo aire</button>
   </div>
 </header>
+
+<div id="selectorPublico" class="selector-publico oculto" role="dialog" aria-modal="true" aria-labelledby="selectorTitulo" aria-describedby="selectorTexto">
+  <div class="selector-panel">
+    <h1 id="selectorTitulo">¿Para quién es?</h1>
+    <p id="selectorTexto">Elige una máscara visual. Podrás cambiarla cuando quieras desde la cabecera.</p>
+    <div class="selector-opciones">
+      <button class="selector-opcion ninos" data-publico="ninos" type="button"><span class="sel-icon" aria-hidden="true">✦</span><span class="sel-t">Niños</span><span class="sel-s">Cálida, alegre y táctil</span></button>
+      <button class="selector-opcion adultos" data-publico="adultos" type="button"><span class="sel-icon" aria-hidden="true">◈</span><span class="sel-t">Adultos</span><span class="sel-s">Clara, tranquila y profesional</span></button>
+    </div>
+  </div>
+</div>
 
 <main class="envoltura">
 
@@ -185,7 +244,7 @@ select,input[type=text],input[type=number],textarea{border:2px solid var(--linea
 <section id="v-inicio">
   <div class="hero">
     <div>
-      <h1>Tus fichas cobran vida</h1>
+      <h1 data-ninos="Tus fichas cobran vida" data-adultos="Tu material de trabajo, listo para cada sesión">Tus fichas cobran vida</h1>
       <p class="sub">Sube tus hojas de imágenes y de palabras. Se cortan solas y se convierten en <b>16 maneras de jugar</b>: en la pantalla, en la pizarra digital o moviendo la mano en el aire. Sin registrarse.</p>
       <div class="fila">
         <button class="btn oro" id="probarDemo" type="button">▶ Probar con el ejemplo</button>
@@ -381,5 +440,42 @@ select,input[type=text],input[type=number],textarea{border:2px solid var(--linea
 <script src="fv-app.js"></script>
 <script src="fv-juegos.js"></script>
 <script src="fv-aire.js"></script>
+<script>
+(function () {
+  var modal = document.getElementById('selectorPublico');
+  var btn = document.getElementById('btnPublico');
+  var publico = null;
+  try { publico = localStorage.getItem('fv-publico'); } catch (e) {}
+  function texto(p) {
+    document.body.classList.remove('tema-ninos');
+    document.body.classList.remove('tema-adultos');
+    document.documentElement.className = 'publico-' + p;
+    document.body.classList.add('tema-' + p);
+    document.querySelectorAll('[data-ninos][data-adultos]').forEach(function (e) { e.textContent = e.getAttribute('data-' + p); });
+    if (btn) btn.setAttribute('aria-label', 'Cambiar público. Ahora: ' + (p === 'ninos' ? 'Niños' : 'Adultos'));
+  }
+  function defaults(p) {
+    var a = FV.aj;
+    if (p === 'adultos') { a.tranq = true; a.ver = 'img+txt'; a.letra = 'tal'; a.tam = 'l'; a.son = false; }
+    else { a.tranq = false; a.ver = 'img'; a.letra = 'mayus'; a.tam = 'm'; }
+    try { localStorage.setItem('fv-ajustes', JSON.stringify(a)); localStorage.setItem('fv-ajustes-publico', '1'); } catch (e) {}
+  }
+  function abre() { modal.classList.remove('oculto'); modal.setAttribute('aria-hidden', 'false'); }
+  function cierra() { modal.classList.add('oculto'); modal.setAttribute('aria-hidden', 'true'); }
+  function elige(p) {
+    var primera = !publico;
+    publico = p;
+    try { localStorage.setItem('fv-publico', p); } catch (e) {}
+    if (primera) defaults(p);
+    texto(p); cierra();
+    if (FV.pintaAj) FV.pintaAj();
+  }
+  if (publico === 'ninos' || publico === 'adultos') { texto(publico); cierra(); } else { abre(); }
+  btn.addEventListener('click', abre);
+  modal.querySelectorAll('[data-publico]').forEach(function (b) { b.addEventListener('click', function () { elige(b.getAttribute('data-publico')); }); });
+  modal.addEventListener('click', function (e) { if (e.target === modal && publico) cierra(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.classList.contains('oculto') && publico) cierra(); });
+}());
+</script>
 </body>
 </html>

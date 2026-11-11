@@ -47,6 +47,7 @@ function pintaAj() {
   $('aNv').textContent = AJ.n + ' cartas'; $('aRv').textContent = AJ.r + ' rondas';
   $('aVelv').textContent = (AJ.vel / 10).toFixed(1) + '×'; $('aDwellv').textContent = (AJ.dwell / 10).toFixed(1) + ' s quieta la mano';
 }
+FV.pintaAj = pintaAj;
 Object.keys(MAPA_AJ).forEach(function (id) {
   var e = $(id); if (!e) return;
   e.addEventListener(e.type === 'range' ? 'input' : 'change', function () {
