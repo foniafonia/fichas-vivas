@@ -1,0 +1,133 @@
+{
+ "id": "v6",
+ "titulo": "6 · Perfiles e informe",
+ "w": 768,
+ "h": 1024,
+ "publico": "ninos",
+ "fin1": "¡Ya sabes medir!",
+ "fin2": "Más en ColmenIA",
+ "pasos": [
+  {
+   "id": "f1",
+   "texto": "Para medir, crea un perfil: | un código, sin nombres. | Todo se queda en tu aparato.",
+   "foco": [
+    null,
+    [
+     "nuevo"
+    ],
+    [
+     "nuevo"
+    ]
+   ],
+   "sels": {
+    "nuevo": [
+     "parent:#pfCrear"
+    ]
+   },
+   "js": "localStorage.removeItem('fv-perfiles-v1');document.getElementById('btnPerfil').click();",
+   "scroll": 0,
+   "wait": 900,
+   "zmax": 2.0
+  },
+  {
+   "id": "f2",
+   "texto": "Con el perfil activo, | cada respuesta se apunta: | qué se pedía, qué tocó y cuánto tardó.",
+   "foco": [
+    [
+     "p"
+    ],
+    [
+     "p"
+    ],
+    [
+     "p"
+    ]
+   ],
+   "sels": {
+    "p": [
+     "[data-pf]"
+    ]
+   },
+   "js": "document.getElementById('pfObj').value='vocabulario y atención';document.getElementById('pfEdad').value='6-8 años';document.getElementById('pfCrear').click();",
+   "wait": 900,
+   "zmax": 2.2
+  },
+  {
+   "id": "f3",
+   "texto": "El informe reúne todas las medidas: | velocidad, precisión, atención, | memoria auditiva y tipo de error.",
+   "foco": [
+    [
+     "res"
+    ],
+    [
+     "med"
+    ],
+    [
+     "med"
+    ]
+   ],
+   "sels": {
+    "res": [
+     "#infCuerpo section"
+    ],
+    "med": [
+     "#infCuerpo .pf-t"
+    ]
+   },
+   "js": "(async () => {\n  const W = ms => new Promise(r => setTimeout(r, ms));\n  document.querySelectorAll('.modal').forEach(m => { if (!m.id) m.remove(); });\n  FV.aj.voz = false; FV.aj.r = 5; FV.aj.n = 4; FV.aj.son = false;\n  document.getElementById('probarDemo').click(); await W(300);\n  let ult = []; const o = FV.habla; FV.habla = function (p, f) { ult = [].concat(p || []); return o.call(FV, p, f); };\n  for (let s = 0; s < 3; s++) {\n    FV.empieza('escucha'); await W(300);\n    for (let r = 0; r < 5; r++) {\n      const id = (ult.map(x => x && x.audio || '').join(' ').match(/voz\\/([a-z]\\d\\d)-q/) || [])[1];\n      const cards = [...document.querySelectorAll('#escenario .carta')];\n      if ((r + s) % 3 === 0) { const m = cards.find(c => c.dataset.id !== id); if (m) { m.click(); await W(900 - s * 200); } }\n      await W(700 - s * 150);\n      const ok = cards.find(c => c.dataset.id === id); if (ok) ok.click(); await W(1650);\n    }\n    await W(300);\n  }\n  for (const juego of ['sombras', 'lee']) {\n    FV.empieza(juego); await W(300);\n    for (let r = 0; r < 5; r++) {\n      const g = document.querySelector('#escenario .grande'), id = g && g.dataset.id;\n      const cards = [...document.querySelectorAll('#escenario .cartas .carta')];\n      if (r === 2) { const m = cards.find(c => c.dataset.id !== id); if (m) { m.click(); await W(400); } }\n      await W(500);\n      const ok = cards.find(c => c.dataset.id === id); if (ok) ok.click(); await W(1650);\n    }\n    await W(300);\n  }\n  FV.empieza('nombra'); await W(300);\n  for (const k of ['solo', 'pista', 'solo', 'ayuda', 'solo']) { if (k === 'pista') document.getElementById('nS').click(); document.querySelector('[data-n=\"' + k + '\"]').click(); await W(900); }\n  await W(300); document.getElementById('jSalir').click(); await W(200);\n  FV.abreInforme(FV.perfilActivo().codigo); await W(600);\n})()\n",
+   "wait": 1200,
+   "zmax": 1.7
+  },
+  {
+   "id": "f4",
+   "texto": "Gráficas de evolución entre sesiones, | por juego, por categoría | y las palabras que más cuestan.",
+   "foco": [
+    [
+     "evo"
+    ],
+    [
+     "evo"
+    ],
+    [
+     "evo"
+    ]
+   ],
+   "sels": {
+    "evo": [
+     "#infCuerpo .pf-dos"
+    ]
+   },
+   "js": "document.querySelector('#infCuerpo .pf-dos').scrollIntoView({block:'center'});",
+   "wait": 600,
+   "zmax": 1.8
+  },
+  {
+   "id": "f5",
+   "texto": "Añade tus propias medidas, | imprímelo en PDF | o exporta los datos.",
+   "foco": [
+    [
+     "bot"
+    ],
+    [
+     "imp"
+    ],
+    [
+     "bot"
+    ]
+   ],
+   "sels": {
+    "bot": [
+     "#infImp",
+     "#infCsv",
+     "#infJson"
+    ],
+    "imp": [
+     "#infImp"
+    ]
+   },
+   "js": "document.getElementById('infImp').scrollIntoView({block:'center'});",
+   "wait": 600,
+   "zmax": 2.4
+  }
+ ]
+}

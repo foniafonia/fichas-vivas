@@ -321,6 +321,8 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
 @media(max-width:760px){.cab{padding:10px 14px;min-height:64px;flex-wrap:wrap}.cab b{font-size:21px}.cab .der{width:100%;order:3;justify-content:flex-end;gap:5px}.btn.cab-btn{font-size:0;padding:8px 10px;min-width:40px}.btn.cab-btn:before{display:none}.envoltura{padding:24px 14px 90px}.hero{padding:26px 22px}.hero .muestra{margin-top:10px}#juego .barra{padding:9px 10px}#juego .barra .tit{font-size:17px}#escenario .cartas{min-height:56vh;grid-auto-rows:minmax(118px,1fr);gap:10px}#escenario .carta{min-height:118px;padding:8px}}
 #btnPerfil.pf-on{background:#2FA866!important;color:#fff!important;border-color:#2FA866!important}
 #btnPerfil.pf-on svg{stroke:#fff}
+.ico-img{width:56px;height:56px;object-fit:contain;display:block}
+.prox-hist .ico-img{width:84px;height:84px}
 </style>
 </head>
 <body>
@@ -358,6 +360,7 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
       <div class="fila">
         <button class="btn oro" id="probarDemo" type="button">▶ Probar con el ejemplo</button>
         <button class="btn" data-ir="subir" type="button">⬆ Subir mi material</button>
+        <button class="btn sec" type="button" data-ayuda>▶ Cómo se usa (vídeos)</button>
       </div>
       <p class="nota" style="margin-top:10px">Tu material no sale de este aparato: se guarda en tu navegador. Para pasarlo a otro aparato o a una compañera, usa «Exportar».</p>
     </div>
@@ -396,7 +399,7 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
 <!-- ============ JUEGOS ============ -->
 <section id="v-juegos" class="oculto">
   <div class="fila" style="justify-content:space-between">
-    <div><h1 id="jTitulo" style="font-size:32px">Material</h1><p class="nota" id="jResumen" style="margin:0"></p></div>
+    <div><h1 id="jTitulo" style="font-size:32px">Material</h1><p class="nota" id="jResumen" style="margin:0"></p><button class="btn sec peq" type="button" data-video="3" style="margin-top:6px">▶ Cómo se ajusta</button></div>
     <div class="fila"><button class="btn sec peq" id="irEditar" type="button">✏ Editar material</button><button class="btn sec peq" id="pantallaC" type="button">⛶ Pantalla completa</button></div>
   </div>
   <details class="ajustes" id="ajustes">
@@ -421,14 +424,14 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
   </details>
   <div class="cajas" id="listaJuegos" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
   <div class="proximo" data-prox="j"></div>
-  <h2>Imprimir (si aun así quieres papel)</h2>
+  <h2>Imprimir (si aun así quieres papel) <button class="btn sec peq como" type="button" data-video="5">▶ Cómo se hace</button></h2>
   <div class="fila">
     <button class="btn sec" data-imp="tarjetas" type="button">🃏 Tarjetas imagen + palabra</button>
     <button class="btn sec" data-imp="bingo" type="button">🎱 Cartones de bingo (6)</button>
     <button class="btn sec" data-imp="memoria" type="button">🧠 Memoria para recortar</button>
     <button class="btn sec" data-imp="registro" type="button">📋 Hoja de registro</button>
   </div>
-  <h2>Registro de esta sesión</h2>
+  <h2>Registro de esta sesión <button class="btn sec peq como" type="button" data-video="6">▶ Cómo se hace</button></h2>
   <p class="nota">Solo en este aparato, sin nombres. Orientativo: no es una prueba diagnóstica.</p>
   <div id="registro" class="nota">Aún no hay partidas.</div>
   <div class="fila" style="margin-top:8px"><button class="btn sec peq" id="regCsv" type="button">Descargar registro (CSV)</button><button class="btn sec peq" id="regBorra" type="button">Borrar registro</button></div>
@@ -442,7 +445,7 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
 <!-- ============ EDITOR ============ -->
 <section id="v-editar" class="oculto">
   <div class="fila" style="justify-content:space-between">
-    <h1 style="font-size:32px">Tu material</h1>
+    <h1 style="font-size:32px">Tu material <button class="btn sec peq como" type="button" data-video="2">▶ Cómo se hace</button></h1>
     <div class="fila"><button class="btn oro" id="edJugar" type="button">▶ Jugar con él</button></div>
   </div>
   <div class="fila" style="margin:6px 0 14px">
@@ -464,7 +467,7 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
   </div>
   <p class="nota">Toca 🎤 para grabar tu voz en una carta (vuelve a tocar para parar). La categoría sirve para «Clasifica» y «El intruso».</p>
   <div class="rejilla-ed" id="edCartas"></div>
-  <h2>Escenas</h2>
+  <h2>Escenas <button class="btn sec peq como" type="button" data-video="4">▶ Cómo se hace</button></h2>
   <p class="nota">Abre una escena para marcar dónde está cada cosa: arrastra un rectángulo sobre el objeto y elige qué carta es.</p>
   <div class="lib" id="edEscenas"></div>
 </section>
@@ -549,11 +552,12 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
 </div>
 <button id="abeja" type="button" aria-label="Mejoras y novedades">🐝 Mejoras<span class="punto oculto" id="abejaPunto"></span></button>
 
-<script src="fv-datos.js?v=20261111c"></script>
-<script src="fv-app.js?v=20261111c"></script>
-<script src="fv-juegos.js?v=20261111c"></script>
-<script src="fv-aire.js?v=20261111c"></script>
-<script src="fv-perfiles.js?v=20261111c"></script>
+<script src="fv-datos.js?v=20261111d"></script>
+<script src="fv-app.js?v=20261111d"></script>
+<script src="fv-juegos.js?v=20261111d"></script>
+<script src="fv-aire.js?v=20261111d"></script>
+<script src="fv-perfiles.js?v=20261111d"></script>
+<script src="fv-ayuda.js?v=20261111d"></script>
 <script>
 (function () {
   var modal = document.getElementById('selectorPublico');

@@ -8,9 +8,9 @@ def V(id, titulo, pasos, fin1, fin2, publico=None):
     json.dump({"id": id, "titulo": titulo, "w": 768, "h": 1024, "publico": publico, "fin1": fin1, "fin2": fin2, "pasos": pasos},
               open(os.path.join(AQUI, f"{id}.json"), "w"), ensure_ascii=False, indent=1)
 
-ESPIA = "(()=>{if(!window.__esp){window.__esp=1;const o=FV.habla;FV.habla=function(p,f){window.__ult=[].concat(p||[]);return o.call(FV,p,f)}}})();"
+ESPIA = "(()=>{if(!window.__esp){window.__esp=1;const o=FV.habla;FV.habla=function(p,f){const u=[].concat(p||[]);const m=u.map(x=>x&&x.audio||'').join(' ').match(/voz\\/([a-z]\\d\\d)-q/);if(m)window.__obj=m[1];return o.call(FV,p,f)}}})();"
 PREP = ESPIA + "FV.aj.n=4;FV.aj.r=4;FV.aj.tam='l';FV.aj.tranq=true;FV.aj.son=false;"
-OBJ = "(()=>{const u=(window.__ult||[]).map(x=>x&&x.audio||'').join(' ');const m=u.match(/voz\\/([am]\\d\\d)-q/);return m?m[1]:null})()"
+OBJ = "(window.__obj||null)"
 DEMO = "document.getElementById('probarDemo').click();"
 ESPERA = lambda ms: f"await new Promise(r=>setTimeout(r,{ms}));"
 def asy(js): return "(async()=>{" + js + "})()"
@@ -73,5 +73,16 @@ V("v5", "5 · Modo aire, imprimir y compartir", [
  P("e5", "En «Mi material» está todo lo tuyo. | Para recibir el de una compañera, | «Importar».", [["lib"], ["lib"], ["imp"]], {"lib": ["#v-biblioteca"], "imp": ["label:has(#fImportar)"]}, js="FV.ir('biblioteca');", scroll=0, zmax=2.4),
  P("e6", "Si echas algo en falta, | pídeselo a la abeja. | Lo que más se pide, se hace antes.", [["abeja"], ["chips"], ["chips"]], {"abeja": ["#mejora > *"], "chips": ["#mejChips"]}, js="FV.ir('inicio');FV.abreMejora();", scroll=0, wait=900, zmax=2.2),
  P("e7", "Y en ColmenIA, la comunidad de logopedas, | se pide, se hace, | se comparte y se mejora entre todos.", [["p"], ["p"], ["p"]], {"p": ["#v-inicio .puente"]}, js="document.getElementById('mejora').classList.add('oculto');", scroll="#v-inicio .puente", margen=300, zmax=2.0),
-], "¡Ya lo sabes todo!", "Entra en ColmenIA", publico="ninos")
+ P("e8", "Y lo que viene: | el modo historia y treinta juegos más. | Vota el que quieras primero.", [["h"], ["h"], ["h"]], {"h": ["[data-prox=\"p\"] .prox-hist"]}, scroll="[data-prox=\"p\"]", margen=40, zmax=1.8),
+], "¡Ya lo sabes todo!", "Siguiente: perfiles e informe", publico="ninos")
+
+# ---------- 6 · Perfiles e informe ----------
+SIM = open(os.path.join(AQUI, "sim.js")).read()
+V("v6", "6 · Perfiles e informe", [
+ P("f1", "Para medir, crea un perfil: | un código, sin nombres. | Todo se queda en tu aparato.", [None, ["nuevo"], ["nuevo"]], {"nuevo": ["parent:#pfCrear"]}, js="localStorage.removeItem('fv-perfiles-v1');document.getElementById('btnPerfil').click();", scroll=0, wait=900, zmax=2.0),
+ P("f2", "Con el perfil activo, | cada respuesta se apunta: | qué se pedía, qué tocó y cuánto tardó.", [["p"], ["p"], ["p"]], {"p": ["[data-pf]"]}, js="document.getElementById('pfObj').value='vocabulario y atención';document.getElementById('pfEdad').value='6-8 años';document.getElementById('pfCrear').click();", wait=900, zmax=2.2),
+ P("f3", "El informe reúne todas las medidas: | velocidad, precisión, atención, | memoria auditiva y tipo de error.", [["res"], ["med"], ["med"]], {"res": ["#infCuerpo section"], "med": ["#infCuerpo .pf-t"]}, js=SIM, wait=1200, zmax=1.7),
+ P("f4", "Gráficas de evolución entre sesiones, | por juego, por categoría | y las palabras que más cuestan.", [["evo"], ["evo"], ["evo"]], {"evo": ["#infCuerpo .pf-dos"]}, js="document.querySelector('#infCuerpo .pf-dos').scrollIntoView({block:'center'});", wait=600, zmax=1.8),
+ P("f5", "Añade tus propias medidas, | imprímelo en PDF | o exporta los datos.", [["bot"], ["imp"], ["bot"]], {"bot": ["#infImp", "#infCsv", "#infJson"], "imp": ["#infImp"]}, js="document.getElementById('infImp').scrollIntoView({block:'center'});", wait=600, zmax=2.4),
+], "¡Ya sabes medir!", "Más en ColmenIA", publico="ninos")
 print("planes ok")

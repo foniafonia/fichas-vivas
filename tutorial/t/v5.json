@@ -5,7 +5,7 @@
  "h": 1024,
  "publico": "ninos",
  "fin1": "¡Ya lo sabes todo!",
- "fin2": "Entra en ColmenIA",
+ "fin2": "Siguiente: perfiles e informe",
  "pasos": [
   {
    "id": "e1",
@@ -172,6 +172,29 @@
    "scroll": "#v-inicio .puente",
    "margen": 300,
    "zmax": 2.0
+  },
+  {
+   "id": "e8",
+   "texto": "Y lo que viene: | el modo historia y treinta juegos más. | Vota el que quieras primero.",
+   "foco": [
+    [
+     "h"
+    ],
+    [
+     "h"
+    ],
+    [
+     "h"
+    ]
+   ],
+   "sels": {
+    "h": [
+     "[data-prox=\"p\"] .prox-hist"
+    ]
+   },
+   "scroll": "[data-prox=\"p\"]",
+   "margen": 40,
+   "zmax": 1.8
   }
  ]
 }

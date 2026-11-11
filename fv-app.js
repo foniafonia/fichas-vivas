@@ -249,15 +249,16 @@ function nuevoSet() { FV.set = { id: 'fv-' + uid(), titulo: 'Mi material', carta
 })();
 
 /* ===================== Próximamente (se enseña, no se entrega) ===================== */
+FV.icoJ = function (id, emo) { return '<img class="ico-img" src="img/juegos/' + id + '.webp" alt="" loading="lazy" onerror="this.outerHTML=this.dataset.e" data-e="' + emo + '">'; };
 function leeQuiero() { try { return JSON.parse(localStorage.getItem('fv-quiero') || '{}') || {}; } catch (e) { return {}; } }
 function pintaProximo() {
   var Qv = leeQuiero(), H = FV_HISTORIA;
-  var hist = '<div class="prox-hist"><div class="ico">' + H.ico + '</div><div><span class="prox-et">Próximamente</span><h3>' + esc(H.t) + '</h3><p>' + esc(H.d) + '</p><ol>' + H.pasos.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>' +
-    '<div class="fila"><button class="btn oro" type="button" data-quiero="historia" aria-pressed="' + !!Qv.historia + '">' + (Qv.historia ? '✓ Lo quiero' : '🙋 Lo quiero') + '</button><a class="btn sec" data-sk="historia" target="_blank" rel="noopener" style="background:transparent;color:#fff;border-color:#fff">Se prueba antes en ColmenIA</a></div></div></div>';
+  var hist = '<div class="prox-hist"><div class="ico">' + FV.icoJ('historia', H.ico) + '</div><div><span class="prox-et">Próximamente</span><h3>' + esc(H.t) + '</h3><p>' + esc(H.d) + '</p><ol>' + H.pasos.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>' +
+    '<div class="fila"><button class="btn oro" type="button" data-quiero="historia" aria-pressed="' + !!Qv.historia + '">' + (Qv.historia ? '✓ Lo quiero' : '🙋 Lo quiero') + '</button></div></div></div>';
   var grupos = {}; FV_PROXIMO.forEach(function (x) { (grupos[x[0]] = grupos[x[0]] || []).push(x); });
   var lista = Object.keys(grupos).map(function (g) {
     return '<p class="prox-g">' + esc(FV_PROX_GRUPOS[g]) + '</p><div class="prox-l">' + grupos[g].map(function (x) {
-      return '<div class="prox-c"><span class="cand" aria-hidden="true">🔒</span><span class="ico">' + x[2] + '</span><b>' + esc(x[3]) + '</b><span>' + esc(x[4]) + '</span><button class="btn sec peq" type="button" data-quiero="' + x[1] + '" aria-pressed="' + !!Qv[x[1]] + '">' + (Qv[x[1]] ? '✓ Lo quiero' : 'Lo quiero') + '</button></div>';
+      return '<div class="prox-c"><span class="cand" aria-hidden="true">🔒</span><span class="ico">' + FV.icoJ(x[1], x[2]) + '</span><b>' + esc(x[3]) + '</b><span>' + esc(x[4]) + '</span><button class="btn sec peq" type="button" data-quiero="' + x[1] + '" aria-pressed="' + !!Qv[x[1]] + '">' + (Qv[x[1]] ? '✓ Lo quiero' : 'Lo quiero') + '</button></div>';
     }).join('') + '</div>';
   }).join('');
   document.querySelectorAll('[data-prox]').forEach(function (c) {
@@ -284,7 +285,7 @@ function pintaJuegos() {
   $('jResumen').textContent = cs.length + ' cartas' + (Object.keys(cats).length ? ' · categorías: ' + Object.keys(cats).join(', ') : '') + (FV.set.escenas.length ? ' · ' + FV.set.escenas.length + ' escena(s)' : '');
   var html = (FV.JUEGOS || []).map(function (j) {
     var falta = j.req ? j.req(FV.set, cs) : '';
-    return '<button class="juego-t tocable" type="button" data-j="' + j.id + '"' + (falta ? ' aria-disabled="true" title="' + esc(falta) + '"' : '') + '><span class="ico">' + j.ico + '</span><b>' + esc(j.nombre) + '</b><span>' + esc(j.desc) + '</span><i>' + (falta ? '⚠ ' + esc(falta) : 'Trabaja: ' + esc(j.trabaja)) + '</i></button>';
+    return '<button class="juego-t tocable" type="button" data-j="' + j.id + '"' + (falta ? ' aria-disabled="true" title="' + esc(falta) + '"' : '') + '><span class="ico">' + FV.icoJ(j.id, j.ico) + '</span><b>' + esc(j.nombre) + '</b><span>' + esc(j.desc) + '</span><i>' + (falta ? '⚠ ' + esc(falta) : 'Trabaja: ' + esc(j.trabaja)) + '</i></button>';
   }).join('');
   $('listaJuegos').innerHTML = html;
   pintaRegistro();
