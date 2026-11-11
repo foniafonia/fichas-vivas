@@ -542,26 +542,31 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
     <div data-pp="pide">
       <p style="margin:0 0 10px">Lo que más pidáis es lo siguiente que hacemos. Toca lo que te ayudaría:</p>
       <div class="fila" id="mejChips"></div>
-      <p class="nota" style="margin:10px 0 0">Cada botón suma un voto (sin datos personales). Si quieres contarlo con tus palabras, hazlo en ColmenIA: allí lo leemos todo.</p>
+      <p class="nota" style="margin:10px 0 0">Cada botón suma un voto.</p>
+      <label for="mejTxt" style="display:block;font-weight:800;margin:12px 0 4px">O escríbenos con tus palabras: nos llega directamente</label>
+      <textarea id="mejTxt" rows="4" maxlength="2000" style="width:100%" placeholder="Qué te falta, qué cambiarías, qué juego quieres…"></textarea>
     </div>
     <div data-pp="nov" class="oculto"><ul class="nov" id="novLista"></ul></div>
     <div data-pp="fallo" class="oculto">
-      <p style="margin:0 0 10px">Toca lo que ha pasado. Se apunta como un aviso, sin datos personales. Para explicarlo con detalle, escríbelo en ColmenIA.</p>
+      <p style="margin:0 0 10px">Toca lo que ha pasado y, si puedes, cuéntanos qué estabas haciendo.</p>
       <div class="fila" id="falChips"></div>
+      <label for="falTxt" style="display:block;font-weight:800;margin:12px 0 4px">¿Qué ha pasado?</label>
+      <textarea id="falTxt" rows="4" maxlength="2000" style="width:100%" placeholder="Por ejemplo: al subir el PDF de animales se queda cargando"></textarea>
     </div>
     <p class="nota" id="mejOk" role="status"></p>
-    <p style="margin:12px 0 0"><a class="btn sec" data-sk="abeja" target="_blank" rel="noopener">Cuéntalo con detalle en ColmenIA</a></p>
+    <div data-pp-env style="margin-top:10px"><div class="fila"><input type="text" id="mejFirma" maxlength="60" placeholder="Tu nombre (opcional)" style="min-width:200px"><button class="btn oro" id="mejEnvia" type="button">🐝 Enviar al equipo</button></div>
+    <p class="nota" style="margin:6px 0 0">Lo leemos el equipo de Fönia y ColmenIA. No escribas nombres ni datos de pacientes.</p></div>
   </div>
 </div>
 <button id="abeja" type="button" aria-label="Mejoras y novedades">🐝 Mejoras<span class="punto oculto" id="abejaPunto"></span></button>
 
-<script src="fv-datos.js?v=20261111f"></script>
-<script src="fv-app.js?v=20261111f"></script>
-<script src="fv-juegos.js?v=20261111f"></script>
-<script src="fv-aire.js?v=20261111f"></script>
-<script src="fv-perfiles.js?v=20261111f"></script>
-<script src="fv-ayuda.js?v=20261111f"></script>
-<script src="fv-pictos.js?v=20261111f"></script>
+<script src="fv-datos.js?v=20261111g"></script>
+<script src="fv-app.js?v=20261111g"></script>
+<script src="fv-juegos.js?v=20261111g"></script>
+<script src="fv-aire.js?v=20261111g"></script>
+<script src="fv-perfiles.js?v=20261111g"></script>
+<script src="fv-ayuda.js?v=20261111g"></script>
+<script src="fv-pictos.js?v=20261111g"></script>
 <script>
 (function () {
   var modal = document.getElementById('selectorPublico');

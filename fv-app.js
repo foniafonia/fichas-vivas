@@ -707,7 +707,35 @@ function imprime(tipo) {
   function limpia(t) { return (t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z ]/g, '').trim().replace(/ +/g, '_').slice(0, 40); }
   var FALLOS = [['no_suena', 'No se oye la voz'], ['hoja', 'La hoja no se corta bien'], ['zonas', 'Las zonas de la escena no coinciden'], ['cuelga', 'Se queda colgado'], ['aire', 'El modo aire no va'], ['imprimir', 'No imprime'], ['otro', 'Otra cosa']];
   $('falChips').innerHTML = FALLOS.map(function (c) { return '<button class="chip" type="button" data-f="' + c[0] + '" aria-pressed="false">' + c[1] + '</button>'; }).join('');
-  $('falChips').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b || b.getAttribute('aria-pressed') === 'true') return; b.setAttribute('aria-pressed', 'true'); cuenta('fallo_' + b.dataset.f); cuenta('fallo_total'); ok.textContent = 'Aviso apuntado. Para contarnos el detalle, escríbelo en ColmenIA.'; });
+  $('falChips').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b || b.getAttribute('aria-pressed') === 'true') return; b.setAttribute('aria-pressed', 'true'); cuenta('fallo_' + b.dataset.f); cuenta('fallo_total'); ok.textContent = 'Aviso apuntado. Si nos cuentas qué estabas haciendo, lo arreglamos antes.'; });
+  /* Buzón de Fönia: lo escrito llega al equipo (caso 0000, sin datos de pacientes). Sin red, queda en cola y se reintenta. */
+  var BUZON = 'https://fonia-buzon.vercel.app/api/registro', COLA = 'fv-buzon-cola';
+  function leeCola() { try { return JSON.parse(localStorage.getItem(COLA) || '[]') || []; } catch (e) { return []; } }
+  function ponCola(l) { try { localStorage.setItem(COLA, JSON.stringify(l.slice(-30))); } catch (e) {} }
+  function manda(c, cb) {
+    if (!window.fetch) { cb(false); return; }
+    fetch(BUZON, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(c) })
+      .then(function (r) { cb(r.ok); }).catch(function () { cb(false); });
+  }
+  function reintenta() { var l = leeCola(); if (!l.length) return; ponCola([]); l.forEach(function (c) { manda(c, function (bien) { if (!bien) ponCola(leeCola().concat([c])); }); }); }
+  FV.enviaBuzon = function (tipo, txt, firma, cb) {
+    var v = ['inicio', 'juegos', 'editar', 'biblioteca'].filter(function (x) { var e = $('v-' + x); return e && !e.classList.contains('oculto'); })[0] || '';
+    var c = { id: 'c0000-fv-' + uid(), caso: '0000', terapeuta: '', material: 'comentario', version: 'fichas-vivas',
+      contenido: 'FICHAS VIVAS · ' + tipo.toUpperCase() + '\n' + (firma ? 'De: ' + firma + '\n' : '') + 'Pantalla: ' + v + (FV.set ? ' · material «' + FV.set.titulo + '»' : '') + '\nAparato: ' + navigator.userAgent.slice(0, 160) + '\n\n' + String(txt).slice(0, 2000) + '\n\nSin datos de pacientes.' };
+    manda(c, function (bien) { if (!bien) ponCola(leeCola().concat([c])); cuenta(bien ? 'buzon_ok' : 'buzon_cola'); if (cb) cb(bien); });
+  };
+  setTimeout(reintenta, 3000); window.addEventListener('online', reintenta);
+  $('mejEnvia').addEventListener('click', function () {
+    var fallo = !m.querySelector('[data-pp="fallo"]').classList.contains('oculto');
+    var ta = $(fallo ? 'falTxt' : 'mejTxt'), t = ta.value.trim();
+    var chips = [].map.call(m.querySelectorAll((fallo ? '#falChips' : '#mejChips') + ' [aria-pressed="true"]'), function (b) { return b.textContent; });
+    if (!t && !chips.length) { ok.textContent = 'Escribe algo o toca una opción.'; ta.focus(); return; }
+    var b = $('mejEnvia'); b.disabled = true; ok.textContent = 'Enviando…';
+    FV.enviaBuzon(fallo ? 'algo no va' : 'mejora', (chips.length ? 'Marcó: ' + chips.join(', ') + '\n' : '') + t, $('mejFirma').value.trim().slice(0, 60), function (bien) {
+      b.disabled = false; if (bien) ta.value = '';
+      ok.textContent = bien ? '¡Recibido! Nos ha llegado al equipo. Gracias 🐝' : 'Ahora no hay conexión: lo guardamos y se envía solo en cuanto vuelva.';
+    });
+  });
   FV.abreMejora = abre;
 })();
 

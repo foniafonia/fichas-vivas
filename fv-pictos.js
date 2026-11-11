@@ -42,7 +42,7 @@ if (c) {
     var b = e.target.closest('[data-bp]'); if (b) { FV.abreSet(setDe(b.dataset.bp)); return; }
     if (e.target.closest('#bpQuiero')) {
       FV.cuenta('mejora_pictos'); FV.cuenta('mejora_total');
-      if (FV.abreAbeja) FV.abreAbeja('Pedido apuntado: el banco entero de pictos. Cuéntanos qué palabras necesitas primero en ColmenIA y se abren antes.');
+      if (FV.abreAbeja) FV.abreAbeja('Pedido apuntado: el banco entero de pictos. Escríbenos aquí debajo qué palabras necesitas primero y se abren antes.');
     }
   });
 }

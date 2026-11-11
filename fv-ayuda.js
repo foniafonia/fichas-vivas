@@ -92,7 +92,7 @@ m.innerHTML = '<div class="panel" style="max-width:560px;height:min(86vh,720px)"
   VIDEOS.map(function (v, i) { return '<button class="ay-v" type="button" data-video="' + (i + 1) + '"><span class="mini" style="background-image:url(https://i.ytimg.com/vi/' + v[0] + '/hqdefault.jpg)"></span><span><b>' + (i + 1) + '. ' + esc(v[1]) + '</b><span>' + esc(v[2]) + '</span></span></button>'; }).join('') +
   '</div></div></div>' +
   '<form class="ay-esc" id="ayForm" data-app="pre"><input id="ayIn" type="text" autocomplete="off" placeholder="Escribe tu duda…" aria-label="Escribe tu duda"><button class="btn oro" type="submit" aria-label="Preguntar">➤</button></form>' +
-  '<p class="nota" style="margin:0;padding:6px 16px 10px;background:#fff">Respuestas ya escritas. No escribas nombres: lo que pones aquí no sale de tu navegador.</p>' +
+  '<p class="nota" style="margin:0;padding:6px 16px 10px;background:#fff">Respuestas ya escritas. Solo sale de tu aparato lo que tú decides enviar al equipo. No escribas nombres.</p>' +
   '</div>';
 document.body.appendChild(m);
 
@@ -130,7 +130,7 @@ document.getElementById('ayForm').addEventListener('submit', function (e) {
   e.preventDefault(); var inp = document.getElementById('ayIn'), t = inp.value.trim(); if (!t) return; inp.value = '';
   var r = busca(t);
   if (r.length) { responde(r[0], t); if (r[1] != null) burbuja('el', 'Quizá también te sirve:' + sug([r[1]])); }
-  else { burbuja('yo', esc(t)); burbuja('el', 'Esa no la tengo escrita todavía. Cuéntala con la abeja 🐝 (Mejoras) o en ColmenIA y la añadimos. Mientras, mira si es alguna de estas:' + sug([0, 1, 3, 7])); }
+  else { burbuja('yo', esc(t)); var bd = 'd' + Date.now(); window.__ayDudas = window.__ayDudas || {}; window.__ayDudas[bd] = t; burbuja('el', 'Esa no la tengo escrita todavía. Si quieres, se la mando al equipo y te la contestamos:<div class="sug"><button type="button" data-envia="' + bd + '">🐝 Enviar esta duda al equipo</button></div>Mientras, mira si es alguna de estas:' + sug([0, 1, 3, 7])); }
   try { FV.cuenta('ayuda_' + (r.length ? 'q' + r[0] : 'sin')); } catch (x) {}
 });
 FV.ayuda = abre; FV.video = video;
@@ -140,6 +140,7 @@ document.addEventListener('click', function (e) {
   var t = e.target.closest ? e.target : null; if (!t) return;
   var ap = t.closest('[data-ap]'); if (ap) { pestana(ap.dataset.ap); return; }
   var q = t.closest('#ayuda [data-q]'); if (q) { responde(+q.dataset.q); return; }
+  var en = t.closest('#ayuda [data-envia]'); if (en && !en.disabled) { en.disabled = true; en.textContent = 'Enviando…'; FV.enviaBuzon('duda de la ayuda', (window.__ayDudas || {})[en.dataset.envia] || '', '', function (bien) { en.textContent = bien ? '✓ Enviada al equipo' : 'Sin conexión: se enviará sola'; }); return; }
   var dv = t.closest('[data-video]'); if (dv) { e.preventDefault(); video(+dv.dataset.video); return; }
   if (t.closest('[data-ayuda]')) { e.preventDefault(); abre('vid'); return; }
   if (t.closest('#ayuda [data-cierra]') || t === m) { m.classList.add('oculto'); return; }
