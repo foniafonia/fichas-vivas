@@ -1,0 +1,218 @@
+{
+ "id": "v1",
+ "titulo": "1 · Empieza aquí",
+ "w": 768,
+ "h": 1024,
+ "publico": null,
+ "fin1": "¡Ya sabes empezar!",
+ "fin2": "Siguiente: sube tu material",
+ "pasos": [
+  {
+   "id": "a1",
+   "texto": "Esto es Fichas vivas. | Convierte tus fichas de papel en juegos, | sin recortar nada.",
+   "foco": [
+    null,
+    [
+     "sel"
+    ],
+    [
+     "sel"
+    ]
+   ],
+   "sels": {
+    "sel": [
+     "parent:#selectorTitulo"
+    ]
+   },
+   "scroll": 0,
+   "wait": 1500
+  },
+  {
+   "id": "a2",
+   "texto": "Primero, elige para quién es: | niños o adultos. | La pantalla y los ajustes se adaptan.",
+   "foco": [
+    [
+     "ninos",
+     "adultos"
+    ],
+    [
+     "ninos"
+    ],
+    [
+     "adultos"
+    ]
+   ],
+   "sels": {
+    "ninos": [
+     "[data-publico=\"ninos\"]"
+    ],
+    "adultos": [
+     "[data-publico=\"adultos\"]"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.0
+  },
+  {
+   "id": "a3",
+   "texto": "Para empezar, | prueba con el material de ejemplo.",
+   "foco": [
+    null,
+    [
+     "demo"
+    ]
+   ],
+   "sels": {
+    "demo": [
+     "#probarDemo"
+    ]
+   },
+   "js": "document.querySelector('[data-publico=\"ninos\"]').click();",
+   "scroll": 0,
+   "zmax": 2.4
+  },
+  {
+   "id": "a4",
+   "texto": "Aquí están los 16 juegos. | Toca uno. | Por ejemplo, «Escucha y toca».",
+   "foco": [
+    [
+     "lista"
+    ],
+    [
+     "escucha"
+    ],
+    [
+     "escucha"
+    ]
+   ],
+   "sels": {
+    "lista": [
+     "#listaJuegos"
+    ],
+    "escucha": [
+     "[data-j=\"escucha\"]"
+    ]
+   },
+   "js": "(()=>{if(!window.__esp){window.__esp=1;const o=FV.habla;FV.habla=function(p,f){window.__ult=[].concat(p||[]);return o.call(FV,p,f)}}})();FV.aj.n=4;FV.aj.r=4;FV.aj.tam='l';FV.aj.tranq=true;FV.aj.son=false;document.getElementById('probarDemo').click();",
+   "scroll": "#listaJuegos",
+   "margen": 120,
+   "zmax": 2.4
+  },
+  {
+   "id": "a5",
+   "texto": "La voz pregunta dónde está cada cosa | y se toca la carta.",
+   "foco": [
+    [
+     "cartas"
+    ],
+    [
+     "cartas"
+    ]
+   ],
+   "sels": {
+    "cartas": [
+     "#escenario .cartas"
+    ],
+    "oir": [
+     "[data-oir]"
+    ]
+   },
+   "js": "(()=>{if(!window.__esp){window.__esp=1;const o=FV.habla;FV.habla=function(p,f){window.__ult=[].concat(p||[]);return o.call(FV,p,f)}}})();FV.aj.n=4;FV.aj.r=4;FV.aj.tam='l';FV.aj.tranq=true;FV.aj.son=false;FV.empieza('escucha');",
+   "wait": 900
+  },
+  {
+   "id": "a6",
+   "texto": "Si acierta, | se oye «¡Eso es!» | y pasa a la siguiente.",
+   "foco": [
+    [
+     "bien"
+    ],
+    [
+     "bien"
+    ],
+    [
+     "bien"
+    ]
+   ],
+   "sels": {
+    "bien": [
+     "#escenario .carta.bien"
+    ]
+   },
+   "js": "(()=>{const id=(()=>{const u=(window.__ult||[]).map(x=>x&&x.audio||'').join(' ');const m=u.match(/voz\\/([am]\\d\\d)-q/);return m?m[1]:null})();document.querySelector('#escenario .carta[data-id=\"'+id+'\"]').click()})()",
+   "wait": 350,
+   "zmax": 2.4
+  },
+  {
+   "id": "a7",
+   "texto": "Si se equivoca, | la voz le dice qué ha tocado | y qué tiene que buscar.",
+   "foco": [
+    [
+     "mal"
+    ],
+    [
+     "mal"
+    ],
+    [
+     "cartas"
+    ]
+   ],
+   "sels": {
+    "mal": [
+     "#escenario .carta.mal"
+    ],
+    "cartas": [
+     "#escenario .cartas"
+    ]
+   },
+   "js": "(async()=>{await new Promise(r=>setTimeout(r,1900));const id=(()=>{const u=(window.__ult||[]).map(x=>x&&x.audio||'').join(' ');const m=u.match(/voz\\/([am]\\d\\d)-q/);return m?m[1]:null})();const o=[...document.querySelectorAll('#escenario .carta')].find(c=>c.dataset.id!==id);o.click();})()",
+   "wait": 500,
+   "zmax": 2.4
+  },
+  {
+   "id": "a8",
+   "texto": "Al segundo fallo, | se ilumina la carta buena. | Sin prisas y sin castigos.",
+   "foco": [
+    [
+     "sel"
+    ],
+    [
+     "sel"
+    ],
+    [
+     "sel"
+    ]
+   ],
+   "sels": {
+    "sel": [
+     "#escenario .carta.sel"
+    ]
+   },
+   "js": "(()=>{const id=(()=>{const u=(window.__ult||[]).map(x=>x&&x.audio||'').join(' ');const m=u.match(/voz\\/([am]\\d\\d)-q/);return m?m[1]:null})();const o=[...document.querySelectorAll('#escenario .carta')].filter(c=>c.dataset.id!==id&&!c.classList.contains('mal'))[0];o.click()})()",
+   "wait": 500,
+   "zmax": 2.4
+  },
+  {
+   "id": "a9",
+   "texto": "Para salir, pulsa «Salir». | «Empezar otra vez» repite el juego.",
+   "foco": [
+    [
+     "salir"
+    ],
+    [
+     "otra"
+    ]
+   ],
+   "sels": {
+    "salir": [
+     "#jSalir"
+    ],
+    "otra": [
+     "#jOtra"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.6
+  }
+ ]
+}

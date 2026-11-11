@@ -1,0 +1,228 @@
+{
+ "id": "v2",
+ "titulo": "2 · Sube tu material",
+ "w": 768,
+ "h": 1024,
+ "publico": "ninos",
+ "fin1": "¡Tu material ya es un juego!",
+ "fin2": "Siguiente: ajusta a cada persona",
+ "pasos": [
+  {
+   "id": "b1",
+   "texto": "Ahora, con tu material. | Pulsa «Subir mi material».",
+   "foco": [
+    null,
+    [
+     "subir"
+    ]
+   ],
+   "sels": {
+    "subir": [
+     "#v-inicio [data-ir=\"subir\"]"
+    ]
+   },
+   "scroll": 0,
+   "zmax": 2.4
+  },
+  {
+   "id": "b2",
+   "texto": "Pulsa «Hoja en cuadrícula». | Vale una foto, una imagen | o un PDF.",
+   "foco": [
+    [
+     "hoja"
+    ],
+    [
+     "hoja"
+    ],
+    [
+     "hoja"
+    ]
+   ],
+   "sels": {
+    "hoja": [
+     "label:has(#fHoja)"
+    ]
+   },
+   "js": "FV.ir('subir');",
+   "scroll": 0,
+   "zmax": 2.4
+  },
+  {
+   "id": "b3",
+   "texto": "La hoja se corta sola: | encuentra la cuadrícula | y numera cada carta.",
+   "foco": [
+    [
+     "lienzo"
+    ],
+    [
+     "info"
+    ],
+    [
+     "lienzo"
+    ]
+   ],
+   "sels": {
+    "lienzo": [
+     "#lienzoCorte"
+    ],
+    "info": [
+     "#cInfo",
+     "#cFil",
+     "#cCol"
+    ]
+   },
+   "archivo": [
+    "#fHoja",
+    "/Users/joseaserraf/Developer/fichas-vivas/tutorial/t/hoja-mascotas.jpg"
+   ],
+   "esperaArchivo": 2500,
+   "zmax": 2.0
+  },
+  {
+   "id": "b4",
+   "texto": "Escribe las palabras en orden, | una por línea, | y pulsa «Cortar y añadir».",
+   "foco": [
+    [
+     "pal"
+    ],
+    [
+     "pal"
+    ],
+    [
+     "cortar"
+    ]
+   ],
+   "sels": {
+    "pal": [
+     "#cPal"
+    ],
+    "cortar": [
+     "#cCortar"
+    ]
+   },
+   "js": "(()=>{const t=document.getElementById('cPal');t.value='jaula\\ncomedero\\nhueso\\ncorrea\\narnés\\ncollar\\ncollar antipulgas\\nplaca identificativa\\ncaseta de perro\\ncamita\\npienso\\nabrigo de perro\\ngalletas para perros\\npelota\\njuguete para morder\\ntransportín';t.dispatchEvent(new Event('input'));document.getElementById('cCortar').scrollIntoView({block:'end'})})()",
+   "zmax": 2.2
+  },
+  {
+   "id": "b5",
+   "texto": "Ya tienes tus cartas. | Puedes cambiar la palabra | o ponerle una categoría.",
+   "foco": [
+    [
+     "c1"
+    ],
+    [
+     "txt"
+    ],
+    [
+     "cat"
+    ]
+   ],
+   "sels": {
+    "c1": [
+     "#edc1"
+    ],
+    "txt": [
+     "#edc1 input[data-k=\"texto\"]"
+    ],
+    "cat": [
+     "#edc1 input[data-k=\"cat\"]"
+    ]
+   },
+   "js": "document.getElementById('cCortar').click();setTimeout(()=>{document.querySelector('.ed-carta').id='edc1'},400);",
+   "scroll": "#edCartas",
+   "margen": 140,
+   "wait": 1200,
+   "zmax": 2.6
+  },
+  {
+   "id": "b6",
+   "texto": "Con el micrófono | grabas tu propia voz | en cada carta.",
+   "foco": [
+    [
+     "mic"
+    ],
+    [
+     "mic"
+    ],
+    [
+     "mic"
+    ]
+   ],
+   "sels": {
+    "mic": [
+     "#edc1 [data-a=\"grabar\"]"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.8
+  },
+  {
+   "id": "b7",
+   "texto": "Se guarda solo en este aparato. | Para pasarlo a una compañera, | «Exportar».",
+   "foco": [
+    [
+     "estado"
+    ],
+    [
+     "estado"
+    ],
+    [
+     "exp"
+    ]
+   ],
+   "sels": {
+    "estado": [
+     "#edEstado"
+    ],
+    "exp": [
+     "#edExportar"
+    ]
+   },
+   "scroll": 0,
+   "zmax": 2.4
+  },
+  {
+   "id": "b8",
+   "texto": "Pulsa «Jugar con él» | y tu material ya funciona | en los 16 juegos.",
+   "foco": [
+    [
+     "jugar"
+    ],
+    [
+     "jugar"
+    ],
+    [
+     "jugar"
+    ]
+   ],
+   "sels": {
+    "jugar": [
+     "#edJugar"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.6
+  },
+  {
+   "id": "b9",
+   "texto": "Aquí lo tienes, | listo para jugar.",
+   "foco": [
+    [
+     "lista"
+    ],
+    [
+     "lista"
+    ]
+   ],
+   "sels": {
+    "lista": [
+     "#listaJuegos"
+    ]
+   },
+   "js": "FV.ir('juegos');",
+   "scroll": "#listaJuegos",
+   "margen": 120,
+   "zmax": 1.6
+  }
+ ]
+}

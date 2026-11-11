@@ -47,9 +47,9 @@ function cartaHTML(c, modo, cls) {
 }
 function modoVer() { return AJ.ver; }
 function rejilla(n) {
-  var w = AJ.tam === 's' ? 170 : AJ.tam === 'l' ? 300 : 225, aire = document.body.classList.contains('aire-on');
-  if (aire) w = Math.max(w, 250);
-  var anchoDisp = Math.min(window.innerWidth - 30, 1200), cols = Math.max(1, Math.min(n, Math.floor(anchoDisp / (w + 12))));
+  var w = AJ.tam === 's' ? 190 : AJ.tam === 'l' ? 340 : 260, aire = document.body.classList.contains('aire-on');
+  if (aire) w = Math.max(w, 270);
+  var anchoDisp = Math.min(window.innerWidth - 48, 1280), cols = Math.max(1, Math.min(n, Math.floor(anchoDisp / (w + 18))));
   if (n === 4 && cols === 3) cols = 2; if (n === 6 && cols === 4) cols = 3; if (n === 9 && cols > 3 && cols < 9) cols = 3;
   return 'grid-template-columns:repeat(' + cols + ',minmax(0,' + w + 'px))';
 }

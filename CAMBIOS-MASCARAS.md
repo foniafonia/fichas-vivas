@@ -16,6 +16,18 @@
 
 No se han cambiado los identificadores ni las clases de interacción de los juegos. Tampoco se han añadido librerías.
 
+## Segunda vuelta visual
+
+- Cabecera común renovada: fondo blanco, borde inferior fino, logo ColmenIA, punto de color en «Fichas vivas.» y botones de contorno con iconos SVG en línea.
+- Tipografías cargadas desde Google Fonts: Inter para Adultos y Nunito para Niños.
+- Adultos: tratamiento Comunica con blanco, pizarra, gris azulado, verde ColmenIA `#2FA866` y oro `#F2B33D`; títulos de juego sin emoji decorativo y tarjetas más limpias.
+- Niños: fondo crema, botones y tarjetas más redondeados, acentos verde/oro/azul/coral y patrón de hexágonos de colmena muy suave en la portada.
+- Portada con hero más aireado, etiquetas en versalitas, tarjetas con radio y sombras suaves, y bloque de Almudena conservado con su rosa.
+- Tarjetas de juegos con franja de color superior alterna.
+- Pantalla de juego rediseñada con barra blanca de contorno y rejillas centradas que crecen hasta ocupar el alto útil; `rejilla()` conserva la lógica y amplía las dimensiones de las cartas.
+- Se mantienen IDs, clases de interacción, lógica de los 16 juegos, cortador, editor, biblioteca, abeja, modo aire e impresión.
+- Se mantienen foco visible, `prefers-reduced-motion` y reglas responsive para móvil.
+
 ## Cómo probarlo
 
 1. Abrir `index.html` en un navegador moderno o servir la carpeta con un servidor estático.

@@ -1,0 +1,27 @@
+<!doctype html><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0}
+html,body{width:1080px;height:1920px;background:transparent;overflow:hidden;font-family:"Avenir Next","Trebuchet MS",system-ui,sans-serif;color:#10231A}
+.top{position:absolute;left:0;top:0;width:1080px;height:170px;background:#fff;border-bottom:4px solid #E3D9C2;display:flex;align-items:center;gap:22px;padding:0 32px}
+.top img{width:96px;height:96px;border-radius:22px}
+.marca{display:flex;flex-direction:column;line-height:1}
+.marca b{font:800 40px/1 "Avenir Next",sans-serif;color:#0E3524}.marca b span{color:#2FA866}
+.marca i{font:600 22px/1.2 "Avenir Next",sans-serif;color:#4d6457;font-style:normal;margin-top:6px}
+.tit{font:700 38px/1.15 "Avenir Next",sans-serif;flex:1;color:#10231A;padding-left:6px;border-left:4px solid #F2B33D}
+.cnt{font:800 32px/1 "Avenir Next",sans-serif;background:#FFF1CC;border:3px solid #F2B33D;border-radius:18px;padding:12px 18px;white-space:nowrap}
+.cap{position:absolute;left:0;top:1610px;width:1080px;height:310px;background:#fff;border-top:4px solid #E3D9C2;padding:24px 44px;display:flex;align-items:center}
+.cap p{font:800 46px/1.2 "Avenir Next",sans-serif;color:#10231A}
+.bar{position:absolute;left:0;top:1906px;height:14px;background:#2FA866}
+.fin{position:absolute;inset:0;background:linear-gradient(160deg,#FFF8EA,#F3EBD6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;text-align:center;padding:60px}
+.fin img{width:230px;height:230px;border-radius:48px}
+.fin .l{font:800 96px/1 "Avenir Next",sans-serif;color:#0E3524}.fin .l span{color:#2FA866}
+.fin .t{font:700 58px/1.25 "Avenir Next",sans-serif;color:#10231A}
+.fin .s{font:800 50px "Avenir Next",sans-serif;background:#2FA866;color:#fff;padding:22px 48px;border-radius:26px}
+.fin .u{font:700 42px "Avenir Next",sans-serif;background:#FFF1CC;padding:12px 32px;border-radius:18px;border:4px solid #F2B33D}
+.fin .p{font:900 40px "Avenir Next",sans-serif;color:#111}.fin .p span{color:#E8336D}
+</style><div id="r"></div><script>
+var LOGO="file:///Users/joseaserraf/Developer/fichas-vivas/img/colmenia-logo.webp";
+function render(e){var r=document.getElementById("r");
+ if(e.kind==="ui"){r.innerHTML='<div class="top"><img src="'+LOGO+'"><div class="marca"><b>Fichas vivas<span>.</span></b><i>ColmenIA</i></div><div class="tit">'+e.video+'</div><div class="cnt">'+e.num+' / '+e.total+'</div></div><div class="cap"><p>'+e.texto+'</p></div><div class="bar" style="width:'+Math.round(1080*e.num/e.total)+'px"></div>';}
+ if(e.kind==="fin"){r.innerHTML='<div class="fin"><img src="'+LOGO+'"><div class="l">Fichas vivas<span>.</span></div><div class="t">'+e.t1+'</div><div class="s">'+e.t2+'</div><div class="u">'+e.t3+'</div><div class="p">#ponun<span>logopeda</span>entuvida</div></div>';}
+ var im=r.querySelector('img'); return new Promise(function(ok){ if(!im||im.complete) ok(); else { im.onload=ok; im.onerror=ok; } }).then(function(){return document.fonts.ready}).then(function(){return true});}
+</script>

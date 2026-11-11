@@ -1,0 +1,130 @@
+{
+ "id": "v4",
+ "titulo": "4 · Escenas",
+ "w": 768,
+ "h": 1024,
+ "publico": "ninos",
+ "fin1": "¡Ya sabes usar escenas!",
+ "fin2": "Siguiente: modo aire y más",
+ "pasos": [
+  {
+   "id": "d1",
+   "texto": "En «¿Dónde está?» | la voz pide un objeto | y se busca en la lámina.",
+   "foco": [
+    [
+     "c"
+    ],
+    [
+     "lam"
+    ],
+    [
+     "lam"
+    ]
+   ],
+   "sels": {
+    "lam": [
+     "#eW"
+    ],
+    "c": [
+     "#eC"
+    ]
+   },
+   "js": "(async()=>{(()=>{if(!window.__esp){window.__esp=1;const o=FV.habla;FV.habla=function(p,f){window.__ult=[].concat(p||[]);return o.call(FV,p,f)}}})();FV.aj.n=4;FV.aj.r=4;FV.aj.tam='l';FV.aj.tranq=true;FV.aj.son=false;document.getElementById('probarDemo').click();FV.empieza('escena');await new Promise(r=>setTimeout(r,300));document.querySelector('[data-e=\"0\"]').click();})()",
+   "wait": 1500,
+   "zmax": 2.0
+  },
+  {
+   "id": "d2",
+   "texto": "Al encontrarlo, | se ilumina | y se oye su nombre.",
+   "foco": [
+    [
+     "bien"
+    ],
+    [
+     "bien"
+    ],
+    [
+     "bien"
+    ]
+   ],
+   "sels": {
+    "bien": [
+     "#eW .zona.bien"
+    ]
+   },
+   "js": "(()=>{const id=(()=>{const u=(window.__ult||[]).map(x=>x&&x.audio||'').join(' ');const m=u.match(/voz\\/([am]\\d\\d)-q/);return m?m[1]:null})();document.querySelector('#eW .zona[data-c=\"'+id+'\"]').click()})()",
+   "wait": 400,
+   "zmax": 2.6
+  },
+  {
+   "id": "d3",
+   "texto": "En «Explora la escena» | se toca cualquier cosa | y dice cómo se llama.",
+   "foco": [
+    [
+     "lam"
+    ],
+    [
+     "z"
+    ],
+    [
+     "z"
+    ]
+   ],
+   "sels": {
+    "lam": [
+     "#eW"
+    ],
+    "z": [
+     "#eW .zona.bien"
+    ]
+   },
+   "js": "(async()=>{FV.empieza('explora');await new Promise(r=>setTimeout(r,300));document.querySelector('[data-e=\"1\"]').click();await new Promise(r=>setTimeout(r,900));document.querySelector('#eW .zona[data-c=\"a04\"]').click();})()",
+   "wait": 600,
+   "zmax": 2.6
+  },
+  {
+   "id": "d4",
+   "texto": "Para usar tu propia lámina, | pulsa «Lámina de escena».",
+   "foco": [
+    null,
+    [
+     "lam"
+    ]
+   ],
+   "sels": {
+    "lam": [
+     "label:has(#fEscena)"
+    ]
+   },
+   "js": "document.getElementById('jSalir').click();FV.ir('editar');",
+   "scroll": 0,
+   "zmax": 2.4
+  },
+  {
+   "id": "d5",
+   "texto": "Elige una carta | y arrastra un rectángulo | encima del objeto.",
+   "foco": [
+    [
+     "cartas"
+    ],
+    [
+     "lam"
+    ],
+    [
+     "lam"
+    ]
+   ],
+   "sels": {
+    "cartas": [
+     "#zCartas"
+    ],
+    "lam": [
+     "#zWrap"
+    ]
+   },
+   "js": "document.querySelector('[data-esc=\"0\"]').click();",
+   "wait": 1200,
+   "zmax": 1.8
+  }
+ ]
+}

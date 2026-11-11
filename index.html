@@ -18,6 +18,9 @@
 }());
 </script>
 <link rel="icon" href="img/colmenia-logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--noche:#0E3524;--verde:#2FA866;--verde2:#1E7B4B;--oro:#F2B33D;--crema:#FFF8EA;--tinta:#10231A;--suave:#4d6457;--linea:#E3D9C2;--rojo:#D9534F;--blanco:#fff;--sombra:0 4px 14px rgba(14,53,36,.14)}
 *{box-sizing:border-box}
@@ -174,7 +177,7 @@ select,input[type=text],input[type=number],textarea{border:2px solid var(--linea
 .paso{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--noche);color:#fff;align-items:center;justify-content:center;font-weight:900;margin-right:6px}
 @media print{body *{visibility:hidden}}
 /* =========================================================
-   Máscaras de público · se mantienen intactas las clases de juego
+   Máscaras de público · segunda vuelta visual
    ========================================================= */
 html,body{min-height:100%}
 body{background:var(--crema);transition:background-color .2s,color .2s}
@@ -213,6 +216,93 @@ body.tema-adultos .nota,html.publico-adultos body .nota{font-size:15px}
 body.tema-ninos .selector-opcion.ninos,.publico-ninos .selector-opcion.ninos{background:#fff8ea}
 body.tema-ninos .selector-opcion.adultos,.publico-ninos .selector-opcion.adultos{background:#f5fbf7}
 @media(max-width:560px){.selector-opciones{grid-template-columns:1fr}.selector-opcion{min-height:132px;padding:16px}.selector-opcion .sel-icon{font-size:34px}.selector-opcion .sel-t{font-size:22px}.hero{padding:20px;border-radius:22px}}
+
+/* Capa común: limpia, editorial y con controles de contorno */
+:root{--azul:#2454c6;--azul-osc:#172b4d;--pizarra:#475569;--borde:#d9e2f0;--oro-suave:#fff6d9}
+body{background:#f6f8fc;color:#172b4d;font-size:18px}
+.cab{position:sticky;top:0;z-index:40;background:#fff;color:#172b4d;border-bottom:1px solid #dbe3ef;box-shadow:0 2px 12px rgba(23,43,77,.06);padding:12px 32px;min-height:76px}
+.cab img{width:44px;height:44px;border-radius:14px;background:#2454c6;padding:6px}
+.cab b{font-size:25px;letter-spacing:-.045em;color:#172b4d}
+.cab b:after{content:'.';color:#e4ad33}
+.cab .lema{font-size:12px;color:#71809a;letter-spacing:.01em;margin-top:1px}
+.cab .der{gap:10px}
+.cab-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.btn{border-radius:12px;padding:11px 18px;min-height:46px;box-shadow:none;transition:transform .18s,box-shadow .18s,background .18s}
+.btn:hover{filter:none;transform:translateY(-1px);box-shadow:0 4px 12px rgba(23,43,77,.1)}
+.btn.sec{border:1px solid #cbd8ea;color:#172b4d;background:#fff}
+.btn.oro{background:#f2b33d;color:#172b4d}
+.btn.cab-btn{border:1px solid #d4deed;background:#fff;color:#172b4d;min-height:44px;font-size:16px;font-weight:700}
+.btn.cab-btn:hover{background:#f6f8fc;border-color:#9eb3d1}
+.envoltura{max-width:1180px;padding:34px 24px 110px}
+.hero{position:relative;background:#fff;border:1px solid #dbe4f1;border-radius:22px;padding:38px 40px;margin:0 0 28px;box-shadow:0 12px 30px rgba(23,43,77,.06);overflow:hidden}
+.hero:after{content:'';position:absolute;right:-80px;bottom:-120px;width:320px;height:320px;border-radius:50%;background:rgba(47,168,102,.07);pointer-events:none}
+.hero h1{color:#172b4d;font-size:clamp(34px,5vw,54px);letter-spacing:-.055em}
+.hero h1:before{content:'TU MATERIAL, A TU RITMO';display:block;color:#6c7d99;font-size:12px;line-height:1;letter-spacing:.14em;font-weight:800;margin-bottom:16px}
+.hero p.sub{color:#52647f;font-size:19px;max-width:660px}
+.hero .muestra{position:relative;z-index:1;gap:10px}
+.hero .muestra img{border:1px solid #dbe4f1;border-radius:16px;box-shadow:0 5px 12px rgba(23,43,77,.06)}
+h2{color:#172b4d;letter-spacing:-.035em;margin-top:34px}
+h2:before{content:' ';display:inline-block;width:7px;height:7px;border-radius:50%;background:#2fa866;margin:0 10px 4px 0}
+.cajas{gap:16px}
+.caja,.juego-t,details.ajustes{background:#fff;border:1px solid #dbe4f1;border-radius:18px;box-shadow:0 7px 20px rgba(23,43,77,.055)}
+.caja{padding:18px}
+.juego-t{position:relative;min-height:184px;padding:20px;border-width:1px;overflow:hidden}
+.juego-t:before{content:'';display:block;position:absolute;left:0;right:0;top:0;height:5px;background:#2fa866}
+.juego-t:nth-child(4n+2):before{background:#f2b33d}.juego-t:nth-child(4n+3):before{background:#6aa0e8}.juego-t:nth-child(4n+4):before{background:#df8795}
+.juego-t:hover{border-color:#9eb3d1;transform:translateY(-3px);box-shadow:0 14px 28px rgba(23,43,77,.11)}
+.juego-t .ico{font-size:34px;margin-top:4px}
+.juego-t b{font-size:20px;color:#172b4d}
+.juego-t span{color:#52647f}
+.juego-t i{color:#71809a}
+.pon{background:#fff;border:2px solid #e8336d;border-radius:18px;box-shadow:0 8px 22px rgba(23,43,77,.06);padding:14px 18px}
+.pon img{width:92px;height:92px;border-radius:14px}
+.pon p{color:#52647f}
+.puente{background:#172b4d;border-radius:18px;padding:22px;margin-top:36px}
+.puente p{color:#d6e0ee}
+.paso{background:#2fa866}
+.selector-publico{background:rgba(23,43,77,.72)}
+.selector-panel{background:#fff;border:1px solid #dbe4f1;border-radius:24px}
+.selector-opcion{border:1px solid #dbe4f1;border-radius:18px;box-shadow:0 6px 16px rgba(23,43,77,.06)}
+.selector-opcion:hover,.selector-opcion:focus-visible{border-color:#2fa866;background:#f4fbf7}
+
+/* Adultos: Comunica / Graf-IA sobrio */
+body.tema-adultos,html.publico-adultos body{--crema:#f6f8fc;--tinta:#172b4d;--suave:#52647f;--linea:#dbe4f1;--noche:#172b4d;--verde:#2fa866;--verde2:#218451;--oro:#f2b33d;background:#f6f8fc;color:#172b4d;font-family:Inter,"Atkinson Hyperlegible",system-ui,sans-serif;font-size:19px}
+body.tema-adultos .cab,html.publico-adultos body .cab{background:#fff;color:#172b4d;padding:12px 32px}
+body.tema-adultos .hero,html.publico-adultos body .hero{background:#fff;border-radius:22px;padding:38px 40px;border-color:#dbe4f1}
+body.tema-adultos .hero h1:before,html.publico-adultos body .hero h1:before{content:'TU MATERIAL, LISTO PARA CADA SESIÓN'}
+body.tema-adultos .juego-t .ico,html.publico-adultos body .juego-t .ico{font-size:0;width:36px;height:36px;border:2px solid #2fa866;border-radius:50%;position:relative}
+body.tema-adultos .juego-t .ico:after,html.publico-adultos body .juego-t .ico:after{content:'';position:absolute;left:10px;top:10px;width:11px;height:8px;border-left:2px solid #2fa866;border-bottom:2px solid #2fa866;transform:rotate(-45deg)}
+body.tema-adultos .juego-t .ico,html.publico-adultos body .juego-t .ico{filter:none}
+body.tema-adultos .caja,body.tema-adultos .juego-t,body.tema-adultos details.ajustes,html.publico-adultos body .caja,html.publico-adultos body .juego-t,html.publico-adultos body details.ajustes{border-radius:16px;box-shadow:0 6px 18px rgba(23,43,77,.06)}
+body.tema-adultos .carta,html.publico-adultos body .carta{border-radius:16px;border:2px solid #dbe4f1;box-shadow:0 8px 18px rgba(23,43,77,.08)}
+body.tema-adultos .consigna,html.publico-adultos body .consigna{color:#172b4d}
+body.tema-adultos .confeti,html.publico-adultos body .confeti{display:none}
+
+/* Niños: crema, color y colmena muy discreta */
+body.tema-ninos,html.publico-ninos body{background-color:#fffaf0;background-image:linear-gradient(30deg,transparent 24%,rgba(242,179,61,.16) 25%,rgba(242,179,61,.16) 26%,transparent 27%,transparent 74%,rgba(242,179,61,.16) 75%,rgba(242,179,61,.16) 76%,transparent 77%),linear-gradient(150deg,transparent 24%,rgba(106,160,232,.12) 25%,rgba(106,160,232,.12) 26%,transparent 27%,transparent 74%,rgba(106,160,232,.12) 75%,rgba(106,160,232,.12) 76%,transparent 77%);background-size:92px 158px;color:#173b58;font-family:Nunito,system-ui,sans-serif}
+body.tema-ninos .cab,html.publico-ninos body .cab{background:#fff;color:#173b58;border-bottom-color:#e8dfcc}
+body.tema-ninos .hero,html.publico-ninos body .hero{background:rgba(255,255,255,.9);border-color:#eadfc8;border-radius:26px}
+body.tema-ninos .hero h1:before,html.publico-ninos body .hero h1:before{content:'TU MATERIAL, A TU MANERA';color:#75899a}
+body.tema-ninos .juego-t,html.publico-ninos body .juego-t{border-color:#eadfc8;border-radius:20px;background:#fff;min-height:190px}
+body.tema-ninos .juego-t .ico,html.publico-ninos body .juego-t .ico{display:flex;width:48px;height:48px;align-items:center;justify-content:center;background:#e9f6ee;border-radius:50%;font-size:29px}
+body.tema-ninos .juego-t:nth-child(4n+2) .ico,html.publico-ninos body .juego-t:nth-child(4n+2) .ico{background:#fff2cb}
+body.tema-ninos .juego-t:nth-child(4n+3) .ico,html.publico-ninos body .juego-t:nth-child(4n+3) .ico{background:#e3f1ff}
+body.tema-ninos .juego-t:nth-child(4n+4) .ico,html.publico-ninos body .juego-t:nth-child(4n+4) .ico{background:#ffe5e5}
+body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-width:3px}
+
+/* Juego a pantalla completa: el contenido ocupa el área útil */
+#juego{background:var(--crema)}
+#juego .barra{background:#fff;color:#172b4d;border-bottom:1px solid #dbe4f1;padding:12px 18px;min-height:70px;box-shadow:0 2px 12px rgba(23,43,77,.06)}
+#juego .barra .tit{font-size:20px;color:#172b4d}
+#juego .barra .prog{color:#71809a}
+#juego .barra .cab-btn{background:#fff;color:#172b4d;border-color:#d4deed}
+#escenario{padding:clamp(16px,3vw,38px);gap:clamp(10px,2vh,22px);justify-content:center;overflow:auto}
+#escenario .cartas{flex:1;align-content:center;grid-auto-rows:minmax(150px,1fr);min-height:min(66vh,720px);max-width:1280px;gap:clamp(12px,1.6vw,22px)}
+#escenario .carta{min-height:150px;padding:14px}
+#escenario .carta img{max-height:34vh}
+#escenario .consigna{margin:0;flex:0 0 auto}
+#escenario .grande{flex:0 0 auto}
+@media(max-width:760px){.cab{padding:10px 14px;min-height:64px;flex-wrap:wrap}.cab b{font-size:21px}.cab .der{width:100%;order:3;justify-content:flex-end;gap:5px}.btn.cab-btn{font-size:0;padding:8px 10px;min-width:40px}.btn.cab-btn:before{display:none}.envoltura{padding:24px 14px 90px}.hero{padding:26px 22px}.hero .muestra{margin-top:10px}#juego .barra{padding:9px 10px}#juego .barra .tit{font-size:17px}#escenario .cartas{min-height:56vh;grid-auto-rows:minmax(118px,1fr);gap:10px}#escenario .carta{min-height:118px;padding:8px}}
 </style>
 </head>
 <body>
@@ -220,10 +310,10 @@ body.tema-ninos .selector-opcion.adultos,.publico-ninos .selector-opcion.adultos
   <img src="img/colmenia-logo.webp" alt="ColmenIA">
   <div><b>Fichas vivas</b><span class="lema">Tu material, de mil maneras. Sin tijeras.</span></div>
   <div class="der">
-    <button class="btn cab-btn" data-ir="inicio" type="button">Inicio</button>
-    <button class="btn cab-btn" data-ir="biblioteca" type="button">Mi material</button>
-    <button class="btn cab-btn" id="btnPublico" type="button" aria-haspopup="dialog">👤 Niños / Adultos</button>
-    <button class="btn cab-btn" id="btnAire" type="button" aria-pressed="false">✋ Modo aire</button>
+    <button class="btn cab-btn" data-ir="inicio" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+    <button class="btn cab-btn" data-ir="biblioteca" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5zM4 5.5v16M7 7h9M7 11h9"/></svg>Mi material</button>
+    <button class="btn cab-btn" id="btnPublico" type="button" aria-haspopup="dialog"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19c.4-3 2.3-5 6-5s5.6 2 6 5M16 6.5a3 3 0 0 1 0 5.8M17 14c2.5.3 3.8 2 4 4"/></svg>Niños / Adultos</button>
+    <button class="btn cab-btn" id="btnAire" type="button" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 12h10a3 3 0 1 0-3-3M4 16h13a3 3 0 1 1-3 3"/><path d="m18 8 2-2 2 2"/></svg>Modo aire</button>
   </div>
 </header>
 

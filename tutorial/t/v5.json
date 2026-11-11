@@ -1,0 +1,177 @@
+{
+ "id": "v5",
+ "titulo": "5 · Modo aire, imprimir y compartir",
+ "w": 768,
+ "h": 1024,
+ "publico": "ninos",
+ "fin1": "¡Ya lo sabes todo!",
+ "fin2": "Entra en ColmenIA",
+ "pasos": [
+  {
+   "id": "e1",
+   "texto": "Con el modo aire | se juega moviendo la mano | delante de la cámara.",
+   "foco": [
+    null,
+    [
+     "aire"
+    ],
+    [
+     "aire"
+    ]
+   ],
+   "sels": {
+    "aire": [
+     "#btnAire"
+    ]
+   },
+   "scroll": 0,
+   "zmax": 2.8
+  },
+  {
+   "id": "e2",
+   "texto": "El dedo índice mueve el puntero. | Para tocar, deja la mano quieta | o junta índice y pulgar.",
+   "foco": [
+    [
+     "aire"
+    ],
+    [
+     "aire"
+    ],
+    [
+     "aire"
+    ]
+   ],
+   "sels": {
+    "aire": [
+     "#btnAire"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.8
+  },
+  {
+   "id": "e3",
+   "texto": "¿Prefieres papel? | Imprime tarjetas, bingo, memoria | o la hoja de registro.",
+   "foco": [
+    null,
+    [
+     "imp"
+    ],
+    [
+     "imp"
+    ]
+   ],
+   "sels": {
+    "imp": [
+     "[data-imp]"
+    ]
+   },
+   "js": "document.getElementById('probarDemo').click();",
+   "scroll": "[data-imp=\"tarjetas\"]",
+   "margen": 260,
+   "zmax": 2.0
+  },
+  {
+   "id": "e4",
+   "texto": "Y el registro de cada sesión, | sin nombres, | se puede descargar.",
+   "foco": [
+    [
+     "reg"
+    ],
+    [
+     "reg"
+    ],
+    [
+     "csv"
+    ]
+   ],
+   "sels": {
+    "reg": [
+     "#registro"
+    ],
+    "csv": [
+     "#regCsv"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.2
+  },
+  {
+   "id": "e5",
+   "texto": "En «Mi material» está todo lo tuyo. | Para recibir el de una compañera, | «Importar».",
+   "foco": [
+    [
+     "lib"
+    ],
+    [
+     "lib"
+    ],
+    [
+     "imp"
+    ]
+   ],
+   "sels": {
+    "lib": [
+     "#v-biblioteca"
+    ],
+    "imp": [
+     "label:has(#fImportar)"
+    ]
+   },
+   "js": "FV.ir('biblioteca');",
+   "scroll": 0,
+   "zmax": 2.4
+  },
+  {
+   "id": "e6",
+   "texto": "Si echas algo en falta, | pídeselo a la abeja. | Lo que más se pide, se hace antes.",
+   "foco": [
+    [
+     "abeja"
+    ],
+    [
+     "chips"
+    ],
+    [
+     "chips"
+    ]
+   ],
+   "sels": {
+    "abeja": [
+     "#mejora > *"
+    ],
+    "chips": [
+     "#mejChips"
+    ]
+   },
+   "js": "FV.ir('inicio');FV.abreMejora();",
+   "scroll": 0,
+   "wait": 900,
+   "zmax": 2.2
+  },
+  {
+   "id": "e7",
+   "texto": "Y en ColmenIA, la comunidad de logopedas, | se pide, se hace, | se comparte y se mejora entre todos.",
+   "foco": [
+    [
+     "p"
+    ],
+    [
+     "p"
+    ],
+    [
+     "p"
+    ]
+   ],
+   "sels": {
+    "p": [
+     "#v-inicio .puente"
+    ]
+   },
+   "js": "document.getElementById('mejora').classList.add('oculto');",
+   "scroll": "#v-inicio .puente",
+   "margen": 300,
+   "zmax": 2.0
+  }
+ ]
+}

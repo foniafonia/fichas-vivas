@@ -1,0 +1,198 @@
+{
+ "id": "v3",
+ "titulo": "3 · Ajusta a cada persona",
+ "w": 768,
+ "h": 1024,
+ "publico": "ninos",
+ "fin1": "¡Ya sabes ajustarlo!",
+ "fin2": "Siguiente: las escenas",
+ "pasos": [
+  {
+   "id": "c1",
+   "texto": "En «Ajustes» | lo adaptas a cada persona.",
+   "foco": [
+    null,
+    [
+     "aj"
+    ]
+   ],
+   "sels": {
+    "aj": [
+     "#ajustes"
+    ]
+   },
+   "js": "document.getElementById('probarDemo').click();document.getElementById('ajustes').open=true;",
+   "scroll": "#ajustes",
+   "margen": 80,
+   "zmax": 1.8
+  },
+  {
+   "id": "c2",
+   "texto": "Cuántas cartas se ven, | cuántas rondas, | y si se ve la imagen, la palabra o las dos.",
+   "foco": [
+    [
+     "n"
+    ],
+    [
+     "r"
+    ],
+    [
+     "ver"
+    ]
+   ],
+   "sels": {
+    "n": [
+     "label:has(#aN)"
+    ],
+    "r": [
+     "label:has(#aR)"
+    ],
+    "ver": [
+     "label:has(#aVer)"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.6
+  },
+  {
+   "id": "c3",
+   "texto": "Mayúsculas o minúsculas, | el tamaño de las cartas | y la velocidad de la voz.",
+   "foco": [
+    [
+     "letra"
+    ],
+    [
+     "tam"
+    ],
+    [
+     "vel"
+    ]
+   ],
+   "sels": {
+    "letra": [
+     "label:has(#aLetra)"
+    ],
+    "tam": [
+     "label:has(#aTam)"
+    ],
+    "vel": [
+     "label:has(#aVel)"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.6
+  },
+  {
+   "id": "c4",
+   "texto": "El modo tranquilo quita puntos y prisas: | el error se nombra con calma.",
+   "foco": [
+    [
+     "tr"
+    ],
+    [
+     "tr"
+    ]
+   ],
+   "sels": {
+    "tr": [
+     "label:has(#aTranq)"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.6
+  },
+  {
+   "id": "c5",
+   "texto": "En «Escucha y toca» | puedes pedir dos o tres palabras seguidas, | para trabajar la memoria auditiva.",
+   "foco": [
+    [
+     "sec"
+    ],
+    [
+     "sec"
+    ],
+    [
+     "sec"
+    ]
+   ],
+   "sels": {
+    "sec": [
+     "label:has(#aSec)"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.6
+  },
+  {
+   "id": "c6",
+   "texto": "Para adultos con afasia, | «Nombra con pistas»: | letra, primera sílaba o la palabra.",
+   "foco": [
+    [
+     "img"
+    ],
+    [
+     "ayudas"
+    ],
+    [
+     "ayudas"
+    ]
+   ],
+   "sels": {
+    "img": [
+     "#escenario .grande"
+    ],
+    "ayudas": [
+     "#escenario .ayudas"
+    ]
+   },
+   "js": "(()=>{if(!window.__esp){window.__esp=1;const o=FV.habla;FV.habla=function(p,f){window.__ult=[].concat(p||[]);return o.call(FV,p,f)}}})();FV.aj.n=4;FV.aj.r=4;FV.aj.tam='l';FV.aj.tranq=true;FV.aj.son=false;FV.empieza('nombra');",
+   "wait": 900,
+   "zmax": 2.2
+  },
+  {
+   "id": "c7",
+   "texto": "Y tú marcas cómo salió: | solo, con pista o repitiendo. | Queda en el registro de la sesión.",
+   "foco": [
+    [
+     "marcar"
+    ],
+    [
+     "marcar"
+    ],
+    [
+     "marcar"
+    ]
+   ],
+   "sels": {
+    "marcar": [
+     "#escenario .marcar"
+    ]
+   },
+   "misma": true,
+   "zmax": 2.2
+  },
+  {
+   "id": "c8",
+   "texto": "Arriba cambias entre niños y adultos: | la pantalla y los ajustes | se adaptan.",
+   "foco": [
+    [
+     "sel"
+    ],
+    [
+     "sel"
+    ],
+    [
+     "sel"
+    ]
+   ],
+   "sels": {
+    "sel": [
+     "parent:#selectorTitulo"
+    ]
+   },
+   "js": "document.getElementById('jSalir').click();document.getElementById('btnPublico').click();",
+   "scroll": 0,
+   "zmax": 1.8
+  }
+ ]
+}
