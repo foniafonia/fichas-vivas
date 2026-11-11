@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fichas vivas · ColmenIA</title>
+<meta name="description" content="Sube tus fichas y juega con ellas de muchas maneras: tablero que habla, escucha y toca, memoria, sombras, clasificar, escenas… Sin tijeras y sin registrarse.">
+<meta property="og:title" content="Fichas vivas · ColmenIA">
+<meta property="og:description" content="Tu material, de mil maneras. Sin tijeras.">
+<meta property="og:image" content="https://foniafonia.github.io/fichas-vivas/img/portada.jpg">
+<meta name="theme-color" content="#0E3524">
+<meta name="robots" content="noindex">
+<link rel="icon" href="img/colmenia-logo.webp">
+<style>
+:root{--noche:#0E3524;--verde:#2FA866;--verde2:#1E7B4B;--oro:#F2B33D;--crema:#FFF8EA;--tinta:#10231A;--suave:#4d6457;--linea:#E3D9C2;--rojo:#D9534F;--blanco:#fff;--sombra:0 4px 14px rgba(14,53,36,.14)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--crema);color:var(--tinta);font:18px/1.45 "Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
+img{max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--verde2)}
+.oculto{display:none!important}
+.envoltura{max-width:1100px;margin:0 auto;padding:16px 16px 110px}
+/* cabecera */
+.cab{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--noche);color:#fff}
+.cab img{width:42px;height:42px;border-radius:10px;background:#fff}
+.cab b{font-size:20px;letter-spacing:.2px}
+.cab .lema{font-size:13px;color:#B8D9C4;display:block;line-height:1.1}
+.cab .der{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+/* botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 18px;background:var(--verde);color:#fff;font-weight:800;cursor:pointer;text-decoration:none;min-height:48px;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.btn:hover{filter:brightness(1.05)}
+.btn:focus-visible,.tocable:focus-visible,.chip:focus-visible{outline:4px solid var(--oro);outline-offset:2px}
+.btn.sec{background:#fff;color:var(--noche);border:2px solid var(--noche)}
+.btn.oro{background:var(--oro);color:var(--noche)}
+.btn.peq{padding:7px 12px;min-height:38px;font-size:15px;border-radius:11px}
+.btn.cab-btn{background:transparent;border:2px solid #B8D9C4;color:#fff;min-height:40px;padding:6px 12px;font-size:15px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.chip{border:2px solid var(--noche);background:#fff;border-radius:999px;padding:7px 13px;font-weight:700;cursor:pointer;font-size:15px;min-height:40px}
+.chip[aria-pressed="true"]{background:var(--noche);color:#fff}
+.fila{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.nota{font-size:14px;color:var(--suave)}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0 0 8px}
+h2{font-size:24px;margin:26px 0 10px}
+h3{margin:0 0 4px;font-size:19px}
+/* portada */
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:22px;align-items:center;margin:8px 0 18px}
+.hero p.sub{font-size:20px;margin:0 0 16px;color:#28463a}
+.hero .muestra{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hero .muestra img{background:#fff;border-radius:14px;border:2px solid var(--linea);aspect-ratio:3/2;object-fit:contain;width:100%;padding:4px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}}
+.cajas{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.caja{background:#fff;border:2px solid var(--linea);border-radius:18px;padding:14px;box-shadow:var(--sombra)}
+.caja .ico{font-size:30px;line-height:1}
+.trabaja{font-size:14px;color:var(--suave);margin:6px 0 10px}
+.juego-t{cursor:pointer;display:flex;flex-direction:column;text-align:left;border:2px solid var(--linea);background:#fff;border-radius:18px;padding:14px;box-shadow:var(--sombra);min-height:150px}
+.juego-t:hover{border-color:var(--verde)}
+.juego-t .ico{font-size:34px}
+.juego-t b{font-size:19px;margin:4px 0 2px}
+.juego-t span{font-size:15px;color:#33503f}
+.juego-t i{font-style:normal;font-size:13px;color:var(--suave);margin-top:auto;padding-top:6px}
+.juego-t[aria-disabled="true"]{opacity:.5}
+.puente{background:var(--noche);color:#fff;border-radius:20px;padding:18px;margin:28px 0 8px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
+.puente img{width:64px;height:64px;border-radius:14px;background:#fff}
+.puente p{margin:2px 0;color:#DCEBE1}
+@media(max-width:640px){.puente{grid-template-columns:1fr}}
+/* ajustes */
+details.ajustes{background:#fff;border:2px solid var(--linea);border-radius:16px;padding:10px 14px;margin:12px 0}
+details.ajustes summary{font-weight:800;cursor:pointer;min-height:36px;display:flex;align-items:center}
+.ajg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px 18px;margin-top:10px}
+.ajg label{display:flex;flex-direction:column;font-size:15px;font-weight:700;gap:4px}
+.ajg label.sw{flex-direction:row;align-items:center;gap:10px}
+.ajg input[type=range]{width:100%}
+.ajg input[type=checkbox]{width:24px;height:24px}
+select,input[type=text],input[type=number],textarea{border:2px solid var(--linea);border-radius:10px;padding:8px 10px;background:#fff;min-height:42px}
+/* editor */
+.rejilla-ed{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.ed-carta{background:#fff;border:2px solid var(--linea);border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.ed-carta.apagada{opacity:.45}
+.ed-carta .ims{display:flex;gap:4px}
+.ed-carta .ims img{flex:1;min-width:0;aspect-ratio:3/2;object-fit:contain;background:#f6f6f2;border-radius:8px}
+.ed-carta input{min-height:36px;padding:5px 8px;font-size:15px;width:100%}
+.ed-carta .mini{display:flex;gap:4px;flex-wrap:wrap}
+.ed-carta .mini button{border:1px solid var(--linea);background:#fff;border-radius:9px;padding:4px 7px;cursor:pointer;font-size:14px;min-height:34px}
+.ed-carta .mini button.on{background:var(--rojo);color:#fff}
+.ed-carta .mini button.hay{background:var(--verde);color:#fff}
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.lib .caja img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:10px;background:#f6f6f2}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(14,53,36,.62);z-index:80;display:flex;align-items:center;justify-content:center;padding:12px}
+.modal>.panel{background:var(--crema);border:3px solid var(--oro);border-radius:20px;max-width:980px;width:100%;max-height:94vh;overflow:auto;padding:16px}
+.panel .x{float:right}
+#lienzoCorte{max-width:100%;border-radius:10px;background:#fff;touch-action:none}
+/* escenario de juego */
+#juego{position:fixed;inset:0;z-index:50;background:var(--crema);display:flex;flex-direction:column}
+#juego .barra{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--noche);color:#fff;flex-wrap:wrap}
+#juego .barra .tit{font-weight:800;font-size:18px;margin-right:auto}
+#juego .barra .prog{font-size:15px;color:#B8D9C4}
+#escenario{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:12px}
+.consigna{font-size:clamp(22px,3.4vw,34px);font-weight:800;text-align:center;margin:4px 0;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap}
+.consigna .btn{min-height:44px}
+.cartas{display:grid;gap:12px;width:100%;max-width:1200px;justify-content:center}
+.carta{position:relative;background:#fff;border:3px solid var(--linea);border-radius:18px;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;-webkit-user-select:none;min-height:110px;transition:transform .15s,border-color .15s,box-shadow .15s;box-shadow:var(--sombra)}
+.carta img{width:100%;height:100%;max-height:30vh;object-fit:contain;pointer-events:none}
+.carta .pal{font-weight:800;font-size:clamp(18px,2.6vw,30px);text-align:center;line-height:1.1;padding:4px;word-break:break-word}
+.carta.solo-pal{min-height:90px}
+.carta:hover{border-color:var(--verde)}
+.carta.sel{border-color:var(--oro);box-shadow:0 0 0 5px rgba(242,179,61,.45)}
+.carta.bien{border-color:var(--verde);box-shadow:0 0 0 6px rgba(47,168,102,.35)}
+.carta.mal{animation:temblor .35s}
+.carta.hecha{opacity:.35;cursor:default}
+.carta.tapada{background:repeating-linear-gradient(45deg,#F2B33D 0 14px,#f7c65f 14px 28px);border-color:var(--oro)}
+.carta.tapada>*{visibility:hidden}
+.carta.hueco{background:#f1eee5;border-style:dashed}
+.carta.hueco>*{visibility:hidden}
+.carta .marca{position:absolute;top:6px;left:6px;width:30px;height:30px;border-radius:50%;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:16px}
+.sombra img{filter:brightness(0) saturate(100%)}
+@keyframes temblor{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+.grande{width:min(78vw,520px);min-height:min(48vh,360px);animation:pop .25s}
+.grande img{max-height:46vh}
+.tablero-det{position:relative;width:min(80vw,480px);aspect-ratio:3/2;background:#fff;border-radius:18px;border:3px solid var(--linea);overflow:hidden}
+.tablero-det img{width:100%;height:100%;object-fit:contain}
+.tablero-det .tapas{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr)}
+.tablero-det .tapas div{background:var(--oro);border:2px solid #e2a42e;transition:opacity .4s}
+.tablero-det .tapas div.fuera{opacity:0}
+.cajas-cat{display:grid;gap:12px;width:100%;max-width:1100px}
+.caja-cat{border:4px dashed var(--noche);border-radius:20px;min-height:150px;padding:10px;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.caja-cat b{font-size:24px}
+.caja-cat .dentro{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:6px}
+.caja-cat .dentro img{width:70px;height:48px;object-fit:contain;background:#fafafa;border-radius:8px}
+.escena-wrap{position:relative;width:min(96vw,1100px);max-height:72vh}
+.escena-wrap img{width:100%;display:block;border-radius:16px;max-height:72vh;object-fit:contain}
+.zona{position:absolute;border-radius:12px;cursor:pointer}
+.zona.ver{outline:3px dashed rgba(14,53,36,.75);background:rgba(242,179,61,.18)}
+.zona.bien{outline:4px solid var(--verde);background:rgba(47,168,102,.28)}
+.zona.mal{outline:4px solid var(--rojo);background:rgba(217,83,79,.18)}
+.zona .et{position:absolute;left:0;top:-26px;background:var(--noche);color:#fff;font-size:13px;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.ruleta-v{font-size:16px;color:var(--suave)}
+.ayudas{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.marcar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.marcar .btn{min-width:150px}
+.fin{background:#fff;border:3px solid var(--oro);border-radius:22px;padding:22px;max-width:640px;text-align:center;animation:pop .3s}
+.fin .gr{font-size:56px}
+.confeti{position:fixed;pointer-events:none;z-index:90;width:10px;height:14px;border-radius:3px;top:-20px;animation:cae 1.6s linear forwards}
+@keyframes cae{to{transform:translateY(105vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* abeja */
+#abeja{position:fixed;right:14px;bottom:14px;z-index:70;background:var(--oro);color:var(--noche);border:3px solid var(--noche);border-radius:999px;padding:10px 16px;font-weight:900;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.25);min-height:52px;font-size:16px}
+#abeja .punto{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--rojo);margin-left:4px;vertical-align:middle}
+#juego:not(.oculto)~#abeja{bottom:auto;top:62px;right:10px;padding:6px 10px;min-height:40px;font-size:14px}
+.pest{display:flex;gap:6px;margin:6px 0 12px}
+.nov li{margin:0 0 8px}
+.nov b{color:var(--verde2)}
+/* modo aire */
+#aireVideo{position:fixed;left:10px;bottom:10px;width:180px;border-radius:14px;border:3px solid var(--oro);transform:scaleX(-1);z-index:95;background:#000;opacity:.9}
+#aireCursor{position:fixed;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;border:4px solid var(--oro);background:rgba(242,179,61,.25);z-index:96;pointer-events:none;left:-100px;top:-100px}
+#aireCursor svg{position:absolute;inset:-6px;width:58px;height:58px;transform:rotate(-90deg)}
+#aireEstado{position:fixed;left:10px;bottom:150px;z-index:95;background:var(--noche);color:#fff;border-radius:10px;padding:4px 10px;font-size:13px}
+.aire-on .carta,.aire-on .btn,.aire-on .zona,.aire-on .caja-cat{min-height:64px}
+.pie{margin-top:30px;font-size:13px;color:var(--suave);text-align:center}
+.paso{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--noche);color:#fff;align-items:center;justify-content:center;font-weight:900;margin-right:6px}
+@media print{body *{visibility:hidden}}
+</style>
+</head>
+<body>
+<header class="cab">
+  <img src="img/colmenia-logo.webp" alt="ColmenIA">
+  <div><b>Fichas vivas</b><span class="lema">Tu material, de mil maneras. Sin tijeras.</span></div>
+  <div class="der">
+    <button class="btn cab-btn" data-ir="inicio" type="button">Inicio</button>
+    <button class="btn cab-btn" data-ir="biblioteca" type="button">Mi material</button>
+    <button class="btn cab-btn" id="btnAire" type="button" aria-pressed="false">✋ Modo aire</button>
+  </div>
+</header>
+
+<main class="envoltura">
+
+<!-- ============ INICIO ============ -->
+<section id="v-inicio">
+  <div class="hero">
+    <div>
+      <h1>Tus fichas cobran vida</h1>
+      <p class="sub">Sube tus hojas de imágenes y de palabras. Se cortan solas y se convierten en <b>16 maneras de jugar</b>: en la pantalla, en la pizarra digital o moviendo la mano en el aire. Sin registrarse.</p>
+      <div class="fila">
+        <button class="btn oro" id="probarDemo" type="button">▶ Probar con el ejemplo</button>
+        <button class="btn" data-ir="subir" type="button">⬆ Subir mi material</button>
+      </div>
+      <p class="nota" style="margin-top:10px">Tu material no sale de este aparato: se guarda en tu navegador. Para pasarlo a otro aparato o a una compañera, usa «Exportar».</p>
+    </div>
+    <div class="muestra" id="muestra"></div>
+  </div>
+
+  <h2>Elige el material de ejemplo</h2>
+  <div class="cajas" id="demos"></div>
+
+  <h2>Cómo funciona</h2>
+  <div class="cajas">
+    <div class="caja"><span class="paso">1</span><b>Sube tus hojas</b><p class="nota">Una hoja de dibujos o fotos en cuadrícula, y si quieres la de palabras. También PDF, fotos sueltas o una foto hecha con la tableta.</p></div>
+    <div class="caja"><span class="paso">2</span><b>Se cortan solas</b><p class="nota">Detecta las líneas de la cuadrícula. Tú escribes las palabras una vez y, si quieres, grabas tu voz.</p></div>
+    <div class="caja"><span class="paso">3</span><b>Elige cómo jugar</b><p class="nota">Tablero que habla, escucha y toca, memoria, sombras, clasificar, ¿qué falta?, escenas, nombrar con pistas, bingo para imprimir…</p></div>
+    <div class="caja"><span class="paso">4</span><b>Ajusta a cada persona</b><p class="nota">Niños o adultos. Número de cartas, voz, mayúsculas, modo tranquilo sin puntos ni prisas, y modo aire para jugar sin tocar la pantalla.</p></div>
+  </div>
+
+  <div class="puente">
+    <img src="img/colmenia-logo.webp" alt="">
+    <div><b style="font-size:20px">Esta herramienta nació de una petición</b><p>Una compañera logopeda tenía mucho material para recortar. En ColmenIA, la comunidad de logopedas, funciona así: cada uno cuenta lo que necesita, se hace, se comparte y entre todos se mejora.</p></div>
+    <a class="btn oro" data-sk="portada" target="_blank" rel="noopener">Entrar en ColmenIA</a>
+  </div>
+  <p class="pie">Fichas vivas · Hecho en ColmenIA · Gabinete Fönia (Melilla). Herramienta de apoyo: no sustituye la valoración ni la intervención de una logopeda.</p>
+</section>
+
+<!-- ============ JUEGOS ============ -->
+<section id="v-juegos" class="oculto">
+  <div class="fila" style="justify-content:space-between">
+    <div><h1 id="jTitulo" style="font-size:32px">Material</h1><p class="nota" id="jResumen" style="margin:0"></p></div>
+    <div class="fila"><button class="btn sec peq" id="irEditar" type="button">✏ Editar material</button><button class="btn sec peq" id="pantallaC" type="button">⛶ Pantalla completa</button></div>
+  </div>
+  <details class="ajustes" id="ajustes">
+    <summary>⚙ Ajustes para esta persona</summary>
+    <div class="ajg">
+      <label>Cartas a la vista <input type="range" id="aN" min="2" max="12" value="4"><span id="aNv" class="nota"></span></label>
+      <label>Rondas por partida <input type="range" id="aR" min="3" max="20" value="8"><span id="aRv" class="nota"></span></label>
+      <label>Qué se ve en la carta
+        <select id="aVer"><option value="img">Solo imagen</option><option value="img+txt">Imagen y palabra</option><option value="txt">Solo palabra escrita</option></select></label>
+      <label>Letra
+        <select id="aLetra"><option value="mayus">MAYÚSCULAS</option><option value="minus">minúsculas</option><option value="tal">Como la escribí</option></select></label>
+      <label>Tamaño de las cartas
+        <select id="aTam"><option value="s">Pequeñas</option><option value="m" selected>Medianas</option><option value="l">Grandes</option></select></label>
+      <label>Velocidad de la voz <input type="range" id="aVel" min="6" max="12" value="9"><span id="aVelv" class="nota"></span></label>
+      <label class="sw"><input type="checkbox" id="aVoz" checked> Voz (lee las consignas y las palabras)</label>
+      <label class="sw"><input type="checkbox" id="aArt" checked> Decir con artículo («el comedero»)</label>
+      <label class="sw"><input type="checkbox" id="aTranq" checked> Modo tranquilo (sin puntos, sin prisas, el error se nombra con calma)</label>
+      <label class="sw"><input type="checkbox" id="aSon" checked> Sonidos de acierto</label>
+      <label>Escucha y toca: palabras seguidas <select id="aSec"><option value="1">1 (una palabra)</option><option value="2">2 (dos, en orden)</option><option value="3">3 (tres, en orden)</option></select></label>
+      <label>Modo aire: tiempo para «tocar» <input type="range" id="aDwell" min="4" max="25" value="10"><span id="aDwellv" class="nota"></span></label>
+    </div>
+  </details>
+  <div class="cajas" id="listaJuegos" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+  <h2>Imprimir (si aun así quieres papel)</h2>
+  <div class="fila">
+    <button class="btn sec" data-imp="tarjetas" type="button">🃏 Tarjetas imagen + palabra</button>
+    <button class="btn sec" data-imp="bingo" type="button">🎱 Cartones de bingo (6)</button>
+    <button class="btn sec" data-imp="memoria" type="button">🧠 Memoria para recortar</button>
+    <button class="btn sec" data-imp="registro" type="button">📋 Hoja de registro</button>
+  </div>
+  <h2>Registro de esta sesión</h2>
+  <p class="nota">Solo en este aparato, sin nombres. Orientativo: no es una prueba diagnóstica.</p>
+  <div id="registro" class="nota">Aún no hay partidas.</div>
+  <div class="fila" style="margin-top:8px"><button class="btn sec peq" id="regCsv" type="button">Descargar registro (CSV)</button><button class="btn sec peq" id="regBorra" type="button">Borrar registro</button></div>
+  <div class="puente">
+    <img src="img/colmenia-logo.webp" alt="">
+    <div><b style="font-size:20px">¿Te falta un juego o una forma de trabajarlo?</b><p>Pídelo con la abeja 🐝 o cuéntalo en ColmenIA. Lo que se pide se hace, se comparte y se mejora entre todos.</p></div>
+    <a class="btn oro" data-sk="juegos" target="_blank" rel="noopener">Entrar en ColmenIA</a>
+  </div>
+</section>
+
+<!-- ============ EDITOR ============ -->
+<section id="v-editar" class="oculto">
+  <div class="fila" style="justify-content:space-between">
+    <h1 style="font-size:32px">Tu material</h1>
+    <div class="fila"><button class="btn oro" id="edJugar" type="button">▶ Jugar con él</button></div>
+  </div>
+  <div class="fila" style="margin:6px 0 14px">
+    <label style="font-weight:800">Título <input type="text" id="edTitulo" maxlength="60" style="min-width:240px"></label>
+    <button class="btn" id="edGuardar" type="button">💾 Guardar</button>
+    <button class="btn sec peq" id="edExportar" type="button">⬇ Exportar para compartir</button>
+    <span class="nota" id="edEstado"></span>
+  </div>
+  <div class="caja" style="margin-bottom:14px">
+    <b>Añadir</b>
+    <div class="fila" style="margin-top:8px">
+      <label class="btn"><input type="file" id="fHoja" accept="image/*,application/pdf" hidden>📄 Hoja en cuadrícula (o PDF)</label>
+      <label class="btn sec"><input type="file" id="fSueltas" accept="image/*" multiple hidden>🖼 Imágenes sueltas</label>
+      <label class="btn sec"><input type="file" id="fFoto" accept="image/*" capture="environment" hidden>📷 Hacer foto</label>
+      <label class="btn sec"><input type="file" id="fEscena" accept="image/*" hidden>🏞 Lámina de escena</label>
+      <button class="btn sec" id="edSoloPal" type="button">🔤 Solo palabras</button>
+    </div>
+    <p class="nota">Con una hoja de imágenes y otra de palabras en el mismo orden, se emparejan solas. Las imágenes sueltas toman la palabra del nombre del archivo.</p>
+  </div>
+  <p class="nota">Toca 🎤 para grabar tu voz en una carta (vuelve a tocar para parar). La categoría sirve para «Clasifica» y «El intruso».</p>
+  <div class="rejilla-ed" id="edCartas"></div>
+  <h2>Escenas</h2>
+  <p class="nota">Abre una escena para marcar dónde está cada cosa: arrastra un rectángulo sobre el objeto y elige qué carta es.</p>
+  <div class="lib" id="edEscenas"></div>
+</section>
+
+<!-- ============ BIBLIOTECA ============ -->
+<section id="v-biblioteca" class="oculto">
+  <h1 style="font-size:32px">Mi material</h1>
+  <div class="fila" style="margin-bottom:12px">
+    <button class="btn" data-ir="subir" type="button">＋ Material nuevo</button>
+    <label class="btn sec"><input type="file" id="fImportar" accept=".json,application/json" hidden>⬆ Importar material de una compañera</label>
+  </div>
+  <div class="lib" id="libLista"></div>
+  <p class="nota" id="libVacia">Aún no has guardado material. Prueba el ejemplo o sube tus hojas.</p>
+</section>
+</main>
+
+<!-- ============ JUEGO A PANTALLA ============ -->
+<div id="juego" class="oculto" role="dialog" aria-label="Juego">
+  <div class="barra">
+    <button class="btn cab-btn" id="jSalir" type="button">✕ Salir</button>
+    <span class="tit" id="jNombre"></span>
+    <span class="prog" id="jProg"></span>
+    <button class="btn cab-btn" id="jOtra" type="button">↻ Empezar otra vez</button>
+  </div>
+  <div id="escenario"></div>
+</div>
+
+<!-- ============ CORTADOR ============ -->
+<div id="corte" class="modal oculto">
+  <div class="panel">
+    <button class="btn sec peq x" id="corteX" type="button">✕</button>
+    <h2 style="margin-top:0">Cortar la hoja</h2>
+    <div class="fila" id="cortePdf" style="margin-bottom:8px"></div>
+    <div class="fila" style="margin-bottom:8px">
+      <label>Esta hoja tiene <select id="cTipo"><option value="img">imágenes</option><option value="pal">palabras</option></select></label>
+      <label>Filas <input type="number" id="cFil" min="1" max="12" value="4" style="width:76px"></label>
+      <label>Columnas <input type="number" id="cCol" min="1" max="12" value="4" style="width:76px"></label>
+      <label>Recorte de cada carta <input type="range" id="cMar" min="0" max="12" value="3"></label>
+      <button class="btn sec peq" id="cDetectar" type="button">🔍 Detectar líneas</button>
+    </div>
+    <p class="nota" id="cInfo"></p>
+    <canvas id="lienzoCorte"></canvas>
+    <label style="display:block;margin-top:10px;font-weight:800">Palabras en orden, una por línea (de izquierda a derecha y de arriba abajo). Opcional.
+      <textarea id="cPal" rows="5" style="width:100%" placeholder="comedero&#10;hueso&#10;correa"></textarea></label>
+    <p class="nota" id="cPar"></p>
+    <div class="fila" style="margin-top:10px"><button class="btn oro" id="cCortar" type="button">✂ Cortar y añadir</button></div>
+  </div>
+</div>
+
+<!-- ============ ESCENA (editor de zonas) ============ -->
+<div id="zonasEd" class="modal oculto">
+  <div class="panel">
+    <button class="btn sec peq x" id="zX" type="button">✕</button>
+    <h2 style="margin-top:0">Marca las cosas de la escena</h2>
+    <p class="nota">1) Elige una carta. 2) Arrastra un rectángulo sobre el objeto en la lámina. Puedes marcar la misma carta en varios sitios. Toca una zona para borrarla.</p>
+    <div class="fila" id="zCartas" style="margin:8px 0"></div>
+    <div class="escena-wrap" id="zWrap" style="touch-action:none;margin:0 auto"></div>
+    <div class="fila" style="margin-top:10px"><button class="btn oro" id="zListo" type="button">Hecho</button><button class="btn sec peq" id="zBorrarEsc" type="button">Quitar esta escena</button></div>
+  </div>
+</div>
+
+<!-- ============ ABEJA ============ -->
+<div id="mejora" class="modal oculto">
+  <div class="panel" style="max-width:560px" role="dialog" aria-label="Mejoras y novedades">
+    <button class="btn sec peq x" id="mejX" type="button">✕</button>
+    <h2 style="margin-top:0">🐝 La abeja de Fichas vivas</h2>
+    <div class="pest"><button class="chip" data-p="pide" aria-pressed="true" type="button">Pide una mejora</button><button class="chip" data-p="nov" aria-pressed="false" type="button">Novedades</button><button class="chip" data-p="fallo" aria-pressed="false" type="button">Algo no va</button></div>
+    <div data-pp="pide">
+      <p style="margin:0 0 10px">Lo que más pidáis es lo siguiente que hacemos. Toca lo que te ayudaría:</p>
+      <div class="fila" id="mejChips"></div>
+      <div class="fila" style="margin-top:10px"><input type="text" id="mejTxt" maxlength="60" placeholder="Otra idea, por ejemplo: juego de frases" aria-label="Otra idea" style="flex:1;min-width:200px"><button class="btn" id="mejBtn" type="button">Enviar</button></div>
+    </div>
+    <div data-pp="nov" class="oculto"><ul class="nov" id="novLista"></ul></div>
+    <div data-pp="fallo" class="oculto">
+      <p style="margin:0 0 10px">Cuéntanos en pocas palabras qué ha pasado y en qué juego. No escribas nombres de pacientes.</p>
+      <div class="fila"><input type="text" id="falTxt" maxlength="80" placeholder="Ej.: en memoria no se dan la vuelta" style="flex:1;min-width:200px"><button class="btn" id="falBtn" type="button">Enviar</button></div>
+    </div>
+    <p class="nota" id="mejOk" role="status"></p>
+    <p style="margin:12px 0 0"><a class="btn sec" data-sk="abeja" target="_blank" rel="noopener">Cuéntalo con detalle en ColmenIA</a></p>
+  </div>
+</div>
+<button id="abeja" type="button" aria-label="Mejoras y novedades">🐝 Mejoras<span class="punto oculto" id="abejaPunto"></span></button>
+
+<script src="fv-datos.js"></script>
+<script src="fv-app.js"></script>
+<script src="fv-juegos.js"></script>
+<script src="fv-aire.js"></script>
+</body>
+</html>
