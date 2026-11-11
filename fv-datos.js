@@ -1,9 +1,10 @@
 /* Fichas vivas · datos del material de ejemplo, frases con voz y novedades.
    Material de ejemplo: hojas de una compañera logopeda (mascotas y aseo), cortadas
    en cartas. Voz: Ximena (Microsoft, es-ES-XimenaNeural) en demo/voz. */
-var FV_VERSION = 2;
+var FV_VERSION = 3;
 
 var FV_NOVEDADES = [
+  { v: 3, f: '11 nov 2026', t: 'Ayuda, vídeos y copia de seguridad', d: 'Botón «Ayuda» con preguntas y 6 vídeos de un minuto. En «Perfiles», copia de seguridad: guarda en un archivo todos los perfiles y sus sesiones, y recupéralos en otro aparato. Próximamente: guardado online opcional para tenerlo en todos tus aparatos.' },
   { v: 2, f: '11 nov 2026', t: 'Más material de Almudena', d: 'Sonido /k/ con dos escenas, el cuerpo humano (cara, cuerpo y por dentro), el pelo, la piel y razas de perro. Máscaras para niños y para adultos. Videotutoriales.' },
   { v: 1, f: '11 nov 2026', t: 'Primera versión', d: 'Subir hojas en cuadrícula y PDF, corte automático, 15 juegos, escenas con zonas, grabar tu voz, modo aire con la mano, bingo y tarjetas para imprimir, exportar para compartir.' }
 ];

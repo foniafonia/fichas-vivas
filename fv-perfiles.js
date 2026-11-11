@@ -35,7 +35,7 @@ FV.mide = {
     if (!S) return null; var p = activo(); if (!p) { S = null; return null; }
     S.d = Date.now() - S.t0; if (!S.ev.length) { S = null; return null; }
     p.sesiones.push(S); if (p.sesiones.length > MAXS) p.sesiones = p.sesiones.slice(-MAXS);
-    guarda(); var s = S; S = null; FV.cuenta('perfil_sesion'); return s;
+    D.sinCopia = (D.sinCopia || 0) + 1; guarda(); var s = S; S = null; FV.cuenta('perfil_sesion'); return s;
   },
   activo: function () { return !!S; }
 };
@@ -240,9 +240,11 @@ function panel() {
     '<div class="caja" style="margin:10px 0"><b>Nuevo perfil</b><div class="fila" style="margin-top:8px"><label>Código <input type="text" id="pfCod" maxlength="12" value="' + sigCodigo() + '" style="width:110px"></label>' +
     '<label>Edad <select id="pfEdad"><option value="">—</option><option>3-5 años</option><option>6-8 años</option><option>9-12 años</option><option>13-17 años</option><option>18-40 años</option><option>41-65 años</option><option>más de 65</option></select></label>' +
     '<label>Objetivo <input type="text" id="pfObj" maxlength="60" placeholder="p. ej. vocabulario del cuerpo" style="min-width:220px"></label><button class="btn" id="pfCrear" type="button">Crear y activar</button></div>' +
-    '<p class="nota" style="margin:6px 0 0">No escribas nombres, iniciales ni datos que identifiquen a la persona.</p></div>';
+    '<p class="nota" style="margin:6px 0 0">No escribas nombres, iniciales ni datos que identifiquen a la persona.</p></div>' + cajaCopia();
   h += codes.length ? '<div class="lib">' + codes.map(function (c) { var p = D.perfiles[c]; return '<div class="caja" data-pf="' + esc(c) + '"><b style="font-size:20px">' + esc(c) + '</b>' + (D.activo === c ? ' <span class="chip" aria-pressed="true" style="font-size:12px;min-height:0;padding:2px 8px">activo</span>' : '') + '<p class="nota">' + (p.edad ? esc(p.edad) + ' · ' : '') + p.sesiones.length + ' sesiones' + (p.objetivo ? '<br>' + esc(p.objetivo) : '') + '</p><div class="fila"><button class="btn peq" data-a="activar" type="button">' + (D.activo === c ? 'Desactivar' : 'Activar') + '</button><button class="btn sec peq" data-a="informe" type="button">📊 Informe</button><button class="btn sec peq" data-a="medidas" type="button">＋ Medidas</button><button class="btn sec peq" data-a="exportar" type="button">⬇</button><button class="btn sec peq" data-a="borrar" type="button">🗑</button></div></div>'; }).join('') + '</div>' : '<p class="nota">Aún no hay perfiles.</p>';
   var m = modal(h, 900);
+  m.querySelector('#pfCopia').onclick = function () { if (guardaCopia()) { m.remove(); panel(); } };
+  m.querySelector('#pfRec').onchange = function (e) { var f = e.target.files && e.target.files[0]; if (f) recuperaCopia(f, function () { m.remove(); panel(); }); };
   m.querySelector('#pfCrear').onclick = function () {
     var c = (m.querySelector('#pfCod').value || '').trim().toUpperCase().replace(/[^A-Z0-9\-]/g, '').slice(0, 12) || sigCodigo();
     if (D.perfiles[c]) { alert('Ya existe ese código.'); return; }
@@ -260,6 +262,44 @@ function panel() {
   });
 }
 FV.abrePerfiles = panel;
+
+/* ===================== Copia de seguridad ===================== */
+function fechaHoy() { var f = new Date(); return f.getFullYear() + '-' + ('0' + (f.getMonth() + 1)).slice(-2) + '-' + ('0' + f.getDate()).slice(-2); }
+function guardaCopia() {
+  var n = Object.keys(D.perfiles).length; if (!n) { alert('Todavía no hay perfiles que guardar.'); return false; }
+  baja('fichas-vivas-copia-' + fechaHoy() + '.json', JSON.stringify({ formato: 'fichas-vivas-copia-v1', guardado: new Date().toISOString(), perfiles: D.perfiles, nota: 'Copia de seguridad de los perfiles anónimos de Fichas vivas. Sin nombres. Se recupera en «Perfiles» → «Recuperar copia».' }), 'application/json');
+  D.ultimaCopia = Date.now(); D.sinCopia = 0; guarda(); FV.cuenta('copia_guardar'); return true;
+}
+function recuperaCopia(archivo, hecho) {
+  var r = new FileReader();
+  r.onload = function () {
+    var x; try { x = JSON.parse(r.result); } catch (e) { alert('Ese archivo no es una copia de Fichas vivas.'); return; }
+    var P = x && x.formato === 'fichas-vivas-copia-v1' ? x.perfiles : x && x.formato === 'fichas-vivas-v1' && x.perfil ? (function () { var o = {}; o[x.perfil.codigo] = { codigo: x.perfil.codigo, edad: x.perfil.edad || '', objetivo: x.perfil.objetivo || '', publico: x.perfil.publico || '', creado: Date.now(), medidas: x.perfil.medidas || [], sesiones: x.sesiones || [] }; return o; })() : null;
+    if (!P || typeof P !== 'object') { alert('Ese archivo no es una copia de Fichas vivas.'); return; }
+    var nuevos = 0, ses = 0;
+    Object.keys(P).forEach(function (c) {
+      var q = P[c]; if (!q || !Array.isArray(q.sesiones)) return;
+      c = String(c).toUpperCase().replace(/[^A-Z0-9\-]/g, '').slice(0, 12); if (!c) return;
+      var p = D.perfiles[c];
+      if (!p) { p = D.perfiles[c] = { codigo: c, edad: String(q.edad || '').slice(0, 20), objetivo: String(q.objetivo || '').slice(0, 60), publico: q.publico || '', creado: q.creado || Date.now(), medidas: Array.isArray(q.medidas) ? q.medidas : [], sesiones: [] }; nuevos++; }
+      var ya = {}; p.sesiones.forEach(function (s) { ya[s.id] = 1; });
+      q.sesiones.forEach(function (s) { if (s && s.id && !ya[s.id] && Array.isArray(s.ev)) { p.sesiones.push(s); ses++; } });
+      p.sesiones.sort(function (a, b) { return a.t0 - b.t0; }); if (p.sesiones.length > MAXS) p.sesiones = p.sesiones.slice(-MAXS);
+      (q.medidas || []).forEach(function (m) { if (m && m.id && !p.medidas.some(function (y) { return y.id === m.id; })) p.medidas.push(m); });
+    });
+    if (guarda()) { FV.cuenta('copia_recuperar'); alert('Copia recuperada: ' + nuevos + ' perfiles nuevos y ' + ses + ' sesiones añadidas. Lo que ya tenías no se ha borrado.'); badge(); if (hecho) hecho(); }
+  };
+  r.readAsText(archivo);
+}
+function cajaCopia() {
+  var u = D.ultimaCopia ? new Date(D.ultimaCopia).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  return '<div class="caja" style="margin:10px 0;border-color:var(--oro)"><b>💾 Copia de seguridad</b>' +
+    '<p style="margin:6px 0">Los perfiles se guardan solo en este navegador. Si borras los datos del navegador o cambias de tablet, se pierden. Por eso conviene guardar una copia de vez en cuando: es un archivo que dejas en tu ordenador, tu carpeta de trabajo o tu nube. Con «Recuperar copia» lo vuelves a cargar aquí o en otro aparato.</p>' +
+    '<p class="nota" style="margin:0 0 8px">' + (u ? 'Última copia: ' + u + '.' : 'Aún no has guardado ninguna copia.') + (D.sinCopia ? ' Sesiones nuevas desde entonces: ' + D.sinCopia + '.' : '') + '</p>' +
+    '<div class="fila"><button class="btn oro" id="pfCopia" type="button">⬇ Guardar copia</button><label class="btn sec" style="cursor:pointer">⬆ Recuperar copia<input type="file" id="pfRec" accept=".json,application/json" hidden></label></div>' +
+    '<p class="nota" style="margin:8px 0 0"><b>Próximamente:</b> guardado online opcional, para tener tus perfiles en todos tus aparatos sin acordarte de las copias. Seguirán siendo códigos sin nombres.</p></div>';
+}
+FV.guardaCopia = guardaCopia;
 function editaMedidas(c) {
   var p = D.perfiles[c];
   var h = '<h2 style="margin-top:0">Medidas propias · ' + esc(c) + '</h2><p class="nota">Lo que tú quieras observar en cada sesión (atención, fatiga, intención comunicativa, inteligibilidad…). Se rellena al acabar cada juego y sale en el informe.</p>' +
@@ -297,6 +337,12 @@ FV.cierreSesion = function (s, cont) {
     s.nota = d.querySelector('#pfNota').value.trim().slice(0, 300); guarda(); d.querySelector('#pfOk').textContent = 'Guardado.';
   };
   d.querySelector('#pfInf').onclick = function () { abreInforme(p.codigo); };
+  if ((D.sinCopia || 0) >= 5) {
+    var av = document.createElement('div'); av.className = 'caja'; av.style.cssText = 'text-align:left;margin-top:10px;border-color:var(--oro)';
+    av.innerHTML = '<b>💾 Llevas ' + D.sinCopia + ' sesiones sin copia de seguridad.</b><p style="margin:4px 0 8px">Si se borran los datos del navegador, se pierden. Guarda una copia en un archivo y, si cambias de aparato, la recuperas en «Perfiles».</p><button class="btn oro peq" type="button">⬇ Guardar copia ahora</button>';
+    av.querySelector('button').onclick = function () { if (guardaCopia()) av.innerHTML = '<b>Copia guardada.</b>'; };
+    cont.appendChild(av);
+  }
 };
 
 document.addEventListener('DOMContentLoaded', badge); badge();

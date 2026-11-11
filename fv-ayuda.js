@@ -21,7 +21,8 @@ var PREG = [
   ['¿Cómo se juega moviendo la mano?', 'Pulsa «Modo aire» y da permiso a la cámara. El dedo índice mueve el puntero; para tocar, deja la mano quieta o junta índice y pulgar. La imagen no se graba ni se envía.', 5],
   ['¿Cómo imprimo o se lo paso a una compañera?', 'En «Imprimir» salen las tarjetas y los cartones de bingo. Con «Exportar» guardas un archivo; tu compañera lo abre con «Importar».', 5],
   ['¿Cómo veo cómo va cada persona?', 'Crea un perfil con un código (P-01), nunca con su nombre. Cada partida se apunta y el informe enseña aciertos, tiempos y ayudas. Se puede descargar.', 6],
-  ['¿Dónde se guarda lo que hago?', 'En este navegador, y no sale de este aparato. Para llevarlo a otro, usa «Exportar».', 0]
+  ['¿Dónde se guarda lo que hago?', 'En este navegador, y no sale de este aparato. El material se pasa a otro aparato con «Exportar»; los perfiles, con la copia de seguridad.', 0],
+  ['¿Cómo hago una copia de seguridad de mis pacientes?', 'En «Perfil» pulsa «Guardar copia»: se descarga un archivo con todos los perfiles y sus sesiones, sin nombres. Guárdalo en tu ordenador o tu nube. Si cambias de tablet o se borra el navegador, pulsa «Recuperar copia» y elige ese archivo. Cada 5 sesiones te lo recordamos. Próximamente habrá guardado online opcional.', 6]
 ];
 var CLAVES = [
   'empiezo empezar inicio primero probar ejemplo funciona',
@@ -32,7 +33,8 @@ var CLAVES = [
   'aire mano camara dedo gesto tocar sin tocar pizarra mediapipe',
   'imprimir papel tarjetas bingo cartones compartir pasar companera exportar importar archivo',
   'perfil perfiles informe progreso resultados medir aciertos evolucion paciente codigo registro',
-  'guardar guarda datos privacidad borrar perder perdido aparato navegador otro movil tablet'
+  'guardar guarda datos privacidad borrar aparato navegador movil',
+  'copia seguridad backup perder perdido recuperar pacientes nube online tablet cambiar'
 ];
 function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9ñ ]/g, ' '); }
 function busca(t) {
@@ -117,7 +119,7 @@ function cierraVideo() { vv.classList.add('oculto'); document.getElementById('vv
 var chat = null;
 function sug(lista) { return '<div class="sug">' + lista.map(function (i) { return '<button type="button" data-q="' + i + '">' + esc(PREG[i][0]) + '</button>'; }).join('') + '</div>'; }
 function burbuja(cl, html) { var d = document.createElement('div'); d.className = 'bur ' + cl; d.innerHTML = html; chat.appendChild(d); d.scrollIntoView({ block: 'end' }); }
-function saluda() { chat = document.getElementById('ayChat'); if (chat.childNodes.length) return; burbuja('el', 'Hola. Soy la ayuda de Fichas vivas. Escribe tu duda con tus palabras o toca una de estas:' + sug([0, 1, 2, 3, 5, 7])); }
+function saluda() { chat = document.getElementById('ayChat'); if (chat.childNodes.length) return; burbuja('el', 'Hola. Soy la ayuda de Fichas vivas. Escribe tu duda con tus palabras o toca una de estas:' + sug([0, 1, 2, 3, 7, 9])); }
 function responde(i, visible) {
   var p = PREG[i]; burbuja('yo', esc(visible || p[0]));
   burbuja('el', esc(p[1]) + (p[2] ? '<div class="sug"><button type="button" data-video="' + p[2] + '">▶ Ver el vídeo</button></div>' : ''));
