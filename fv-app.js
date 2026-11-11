@@ -248,6 +248,33 @@ function nuevoSet() { FV.set = { id: 'fv-' + uid(), titulo: 'Mi material', carta
   $('probarDemo').addEventListener('click', function () { abreSet(setDemo(FV_DEMOS.filter(function (d) { return d.id === 'demo-todo'; })[0])); });
 })();
 
+/* ===================== Próximamente (se enseña, no se entrega) ===================== */
+function leeQuiero() { try { return JSON.parse(localStorage.getItem('fv-quiero') || '{}') || {}; } catch (e) { return {}; } }
+function pintaProximo() {
+  var Qv = leeQuiero(), H = FV_HISTORIA;
+  var hist = '<div class="prox-hist"><div class="ico">' + H.ico + '</div><div><span class="prox-et">Próximamente</span><h3>' + esc(H.t) + '</h3><p>' + esc(H.d) + '</p><ol>' + H.pasos.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>' +
+    '<div class="fila"><button class="btn oro" type="button" data-quiero="historia" aria-pressed="' + !!Qv.historia + '">' + (Qv.historia ? '✓ Lo quiero' : '🙋 Lo quiero') + '</button><a class="btn sec" data-sk="historia" target="_blank" rel="noopener" style="background:transparent;color:#fff;border-color:#fff">Se prueba antes en ColmenIA</a></div></div></div>';
+  var grupos = {}; FV_PROXIMO.forEach(function (x) { (grupos[x[0]] = grupos[x[0]] || []).push(x); });
+  var lista = Object.keys(grupos).map(function (g) {
+    return '<p class="prox-g">' + esc(FV_PROX_GRUPOS[g]) + '</p><div class="prox-l">' + grupos[g].map(function (x) {
+      return '<div class="prox-c"><span class="cand" aria-hidden="true">🔒</span><span class="ico">' + x[2] + '</span><b>' + esc(x[3]) + '</b><span>' + esc(x[4]) + '</span><button class="btn sec peq" type="button" data-quiero="' + x[1] + '" aria-pressed="' + !!Qv[x[1]] + '">' + (Qv[x[1]] ? '✓ Lo quiero' : 'Lo quiero') + '</button></div>';
+    }).join('') + '</div>';
+  }).join('');
+  document.querySelectorAll('[data-prox]').forEach(function (c) {
+    var portada = c.dataset.prox === 'p';
+    c.innerHTML = '<h2>Lo que viene: ' + FV_PROXIMO.length + ' juegos más y el modo historia</h2><p class="nota" style="margin:-4px 0 12px">Todos funcionarán con tu propio material. Vota lo que quieras primero: lo más votado es lo siguiente que hacemos.</p>' + hist +
+      (portada ? '<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:800;min-height:40px;display:flex;align-items:center">Ver los ' + FV_PROXIMO.length + ' juegos que vienen</summary>' + lista + '</details>' : lista);
+  });
+  puentes();
+}
+document.addEventListener('click', function (e) {
+  var b = e.target.closest('[data-quiero]'); if (!b || b.getAttribute('aria-pressed') === 'true') return;
+  var Qv = leeQuiero(); Qv[b.dataset.quiero] = 1; try { localStorage.setItem('fv-quiero', JSON.stringify(Qv)); } catch (er) {}
+  cuenta('quiero_' + b.dataset.quiero); cuenta('quiero_total');
+  document.querySelectorAll('[data-quiero="' + b.dataset.quiero + '"]').forEach(function (x) { x.setAttribute('aria-pressed', 'true'); x.textContent = '✓ Lo quiero'; });
+});
+pintaProximo();
+
 /* ===================== Vista de juegos ===================== */
 function pintaJuegos() {
   if (!FV.set) { FV.ir('inicio'); return; }
