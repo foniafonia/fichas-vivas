@@ -15,6 +15,7 @@ var cursor = null, estado = null, aro = null, sx = -1, sy = -1, objetivo = null,
 var DWELL = (FV.aj.dwell || 10) * 100, FPS_MS = 50, CIRC = 2 * Math.PI * 25;
 FV.aireDwell = function (ms) { DWELL = ms; };
 var boton = $('btnAire');
+function etiqueta(t) { var sv = boton.querySelector('svg'); boton.textContent = t; if (sv) boton.insertBefore(sv, boton.firstChild); }
 
 function msg(t) { if (estado) estado.textContent = t; }
 function crea() {
@@ -36,7 +37,7 @@ function enciende() {
     try { localStorage.setItem('fv-aire-ok', '1'); } catch (e) {}
   }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('Este navegador no permite usar la cámara.'); return; }
-  cargando = true; crea(); msg('Cargando el modo aire…'); boton.setAttribute('aria-pressed', 'true'); boton.textContent = '✋ Cargando…';
+  cargando = true; crea(); msg('Cargando el modo aire…'); boton.setAttribute('aria-pressed', 'true'); etiqueta('Cargando…');
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false }).then(function (st) {
     stream = st; video.srcObject = st; return video.play();
   }).then(function () {
@@ -48,7 +49,7 @@ function enciende() {
       });
     }).then(function (d) { detector = d; return d; });
   }).then(function () {
-    cargando = false; activo = true; document.body.classList.add('aire-on'); boton.textContent = '✋ Aire: sí';
+    cargando = false; activo = true; document.body.classList.add('aire-on'); etiqueta('Aire: sí');
     msg('Levanta la mano y apunta con el dedo índice'); FV.cuenta('aire'); bucle();
   }).catch(function (e) {
     cargando = false; apaga();
@@ -58,7 +59,7 @@ function enciende() {
 function apaga() {
   activo = false; cancelAnimationFrame(raf); raf = 0;
   if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
-  quita(); document.body.classList.remove('aire-on'); boton.setAttribute('aria-pressed', 'false'); boton.textContent = '✋ Modo aire';
+  quita(); document.body.classList.remove('aire-on'); boton.setAttribute('aria-pressed', 'false'); etiqueta('Modo aire');
   objetivo = null; bloqueado = null; sx = sy = -1;
 }
 boton.addEventListener('click', function () { if (activo || cargando) apaga(); else enciende(); });

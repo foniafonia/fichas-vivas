@@ -57,11 +57,11 @@ function porId(id) { return FV.set.cartas.filter(function (c) { return c.id === 
 function objetivos(lista, n) { var r = [], ult = null; while (r.length < n && lista.length) { var b = baraja(lista); b.forEach(function (c) { if (r.length < n && c !== ult) { r.push(c); ult = c; } }); if (lista.length === 1) break; } return r; }
 function opciones(obj, pool, n) { return baraja([obj].concat(baraja(pool.filter(function (c) { return c !== obj && FV.textoCarta(c) !== FV.textoCarta(obj); })).slice(0, Math.max(1, n - 1)))); }
 function abre(id) {
-  limpia(); G = { id: id, ac: 0, int: 0, ay: 0, t0: Date.now(), det: '' };
+  limpia(); G = { id: id, ac: 0, int: 0, ay: 0, t0: Date.now(), tq: Date.now(), ayR: 0, det: '' }; if (FV.mide) FV.mide.inicio(id);
   $('juego').classList.remove('oculto'); $('jNombre').textContent = NOMBRE[id] || ''; document.body.style.overflow = 'hidden';
   E.innerHTML = ''; prog(''); FV.cuenta('juego_' + id); FV.cuenta('jugar');
 }
-function cierra() { limpia(); $('juego').classList.add('oculto'); document.body.style.overflow = ''; G = null; FV.pintaRegistro(); }
+function cierra() { if (FV.mide && FV.mide.activo()) FV.mide.fin(); limpia(); $('juego').classList.add('oculto'); document.body.style.overflow = ''; G = null; FV.pintaRegistro(); }
 $('jSalir').addEventListener('click', cierra);
 $('jOtra').addEventListener('click', function () { if (G) FV.empieza(G.id); });
 document.addEventListener('keydown', function (e) {
@@ -72,7 +72,7 @@ document.addEventListener('keydown', function (e) {
 function fin(texto) {
   limpia();
   var seg = (Date.now() - G.t0) / 1000;
-  FV.registra({ juego: NOMBRE[G.id], aciertos: G.ac, intentos: G.int, ayudas: G.ay, seg: seg, detalle: G.det });
+  FV.registra({ juego: NOMBRE[G.id], aciertos: G.ac, intentos: G.int, ayudas: G.ay, seg: seg, detalle: G.det }); var sesP = FV.mide ? FV.mide.fin() : null;
   FV.suena('fin'); FV.confeti(); FV.habla([FV.frase('terminado')]); FV.cuenta('fin_' + G.id);
   var res = texto || (AJ.tranq ? 'Lo has hecho genial.' : G.ac + ' aciertos en ' + G.int + ' intentos' + (G.ay ? ' · ' + G.ay + ' ayudas' : '') + '.');
   E.innerHTML = '<div class="fin"><div class="gr">🎉</div><h2 style="margin:0 0 6px">¡Terminado!</h2><p style="font-size:20px">' + esc(res) + '</p>' +
@@ -80,20 +80,24 @@ function fin(texto) {
     '<p class="nota" style="margin:10px 0 6px">¿Le falta algo a este juego? Pídelo a la abeja o cuéntalo en ColmenIA, la comunidad donde nació esta herramienta.</p>' +
     '<div class="fila" style="justify-content:center"><button class="btn sec peq tocable" id="fAbeja" type="button">🐝 Pedir una mejora</button><a class="btn peq tocable" data-sk="fin" target="_blank" rel="noopener">Entrar en ColmenIA</a></div></div>';
   FV.puentes(E); prog('');
-  $('fOtra').onclick = function () { FV.empieza(G.id); }; $('fOtro').onclick = cierra; $('fAbeja').onclick = function () { FV.abreMejora(); };
+  $('fOtra').onclick = function () { FV.empieza(G.id); }; if (sesP && FV.cierreSesion) FV.cierreSesion(sesP, E.querySelector('.fin')); $('fOtro').onclick = cierra; $('fAbeja').onclick = function () { FV.abreMejora(); };
 }
+function apunta(o, e, ok, k, x) { if (!FV.mide || !G) return; FV.mide.ev({ o: o, e: e, ok: ok, ms: Date.now() - G.tq, ay: G.ayR, k: k, x: x }); if (ok) G.ayR = 0; }
+FV._apunta = apunta;
 function bien(el, c, sig) {
+  if (c) apunta(c, c, 1);
   G.ac++; G.int++; if (el) el.classList.add('bien'); FV.suena('bien');
   FV.habla([FV.frase(Math.random() < .5 ? 'eso_es' : 'muy_bien')].concat(c ? [FV.vozCarta(c, 'w')] : []));
-  if (sig) tarde(sig, 1500);
+  if (sig) tarde(function () { if (G) G.tq = Date.now(); sig(); }, 1500);
 }
 function mal(el, tocada, buscada) {
+  if (buscada) apunta(buscada, tocada, 0);
   G.int++; if (el) { el.classList.remove('mal'); void el.offsetWidth; el.classList.add('mal'); }
   if (AJ.tranq && tocada && buscada) FV.habla([FV.frase('ese_es'), FV.vozCarta(tocada, 'w'), FV.frase('busca'), FV.vozCarta(buscada, 'w')]);
   else { FV.suena('mal'); FV.habla([FV.frase('otra_vez')]); }
 }
 function ayuda(cont, buscada) {
-  G.ay++; var e = cont.querySelector('[data-id="' + buscada.id + '"]'); if (e) e.classList.add('sel');
+  G.ay++; G.ayR = 1; var e = cont.querySelector('[data-id="' + buscada.id + '"]'); if (e) e.classList.add('sel');
 }
 function oir(f) { return '<button class="btn sec peq tocable" type="button" data-oir="1" aria-label="Volver a oír">🔊 Oír</button>'; }
 E.addEventListener('click', function (e) { var b = e.target.closest('[data-oir]'); if (b && G && G.repite) G.repite(); });
@@ -139,10 +143,10 @@ JUEGO.escucha = function (cs) {
       if (c === obj) {
         paso++; el.classList.add('bien');
         if (k > 1) { var m = document.createElement('span'); m.className = 'marca'; m.style.background = 'var(--verde)'; m.textContent = paso; el.appendChild(m); }
-        if (paso >= seq.length) { G.det += (G.det ? ',' : '') + seq.map(function (x) { return x.texto; }).join('+') + (fallosR ? '(' + fallosR + ')' : ''); bien(null, k === 1 ? obj : null, nueva); }
+        if (k > 1) apunta(obj, c, 1, 'paso'); if (paso >= seq.length) { if (k > 1) apunta(seq[0], null, 1, 'secuencia'); G.det += (G.det ? ',' : '') + seq.map(function (x) { return x.texto; }).join('+') + (fallosR ? '(' + fallosR + ')' : ''); bien(null, k === 1 ? obj : null, nueva); }
         else { FV.suena('bien'); }
       } else {
-        fallosR++; mal(el, c, obj);
+        fallosR++; if (k > 1) apunta(obj, c, 0, 'secuencia'); mal(el, c, obj);
         if (fallosR >= 2 && AJ.tranq) ayuda(cont, obj);
         if (k > 1 && !AJ.tranq) { paso = 0; cont.querySelectorAll('.carta').forEach(function (x) { x.classList.remove('bien'); var mm = x.querySelector('.marca'); if (mm) mm.remove(); }); }
       }
@@ -192,9 +196,9 @@ JUEGO.une = function (cs) {
       if (a === b) {
         var col = COL[hechas % COL.length]; hechas++;
         [elegido, el].forEach(function (x) { x.classList.remove('sel'); x.classList.add('bien'); x.style.borderColor = col; var m = document.createElement('span'); m.className = 'marca'; m.style.background = col; m.textContent = hechas; x.appendChild(m); x.classList.add('hecha'); x.style.opacity = '.75'; });
-        elegido = null; G.ac++; G.int++; FV.suena('bien'); FV.dice(a, 'w');
+        apunta(a, b, 1, 'une'); G.tq = Date.now(); elegido = null; G.ac++; G.int++; FV.suena('bien'); FV.dice(a, 'w');
         if (hechas >= n) tarde(nueva, 1400);
-      } else { mal(el, null, null); elegido.classList.remove('sel'); elegido = null; }
+      } else { apunta(a, b, 0, 'une'); mal(el, null, null); elegido.classList.remove('sel'); elegido = null; }
     };
   }
   nueva();
@@ -216,9 +220,9 @@ function memoria(cs, conPalabra) {
     if (abiertas.length < 2) { if (cartas[+el.dataset.k].m === 'img') FV.dice(porId(el.dataset.id), 'w'); return; }
     G.int++; var a = abiertas[0], b = abiertas[1]; abiertas = [];
     if (a.dataset.id === b.dataset.id) {
-      hechas++; G.ac++; a.classList.add('bien'); b.classList.add('bien'); FV.suena('bien'); FV.dice(porId(a.dataset.id), 'w');
+      apunta(porId(a.dataset.id), porId(b.dataset.id), 1, 'pareja'); G.tq = Date.now(); hechas++; G.ac++; a.classList.add('bien'); b.classList.add('bien'); FV.suena('bien'); FV.dice(porId(a.dataset.id), 'w');
       if (hechas >= n) tarde(function () { fin(AJ.tranq ? 'Todas las parejas encontradas.' : 'Parejas en ' + G.int + ' intentos.'); }, 1500);
-    } else { bloqueo = true; tarde(function () { a.classList.add('tapada'); b.classList.add('tapada'); bloqueo = false; }, 1100); }
+    } else { apunta(porId(a.dataset.id), porId(b.dataset.id), 0, 'pareja'); bloqueo = true; tarde(function () { a.classList.add('tapada'); b.classList.add('tapada'); bloqueo = false; }, 1100); }
   };
 }
 JUEGO.memoria = function (cs) { memoria(cs, false); };
@@ -241,7 +245,7 @@ JUEGO.falta = function (cs) {
         var fuera = cs.filter(function (c) { return vista.indexOf(c) < 0; }), ops = baraja([quita].concat(baraja(fuera.length >= 2 ? fuera : vista.filter(function (c) { return c !== quita; })).slice(0, Math.min(3, AJ.n - 1))));
         E.querySelector('.consigna').innerHTML = '¿Qué falta?';
         var d = document.createElement('div'); d.className = 'cartas'; d.setAttribute('style', rejilla(ops.length) + ';border-top:3px dashed var(--linea);padding-top:12px'); d.innerHTML = ops.map(function (c) { return cartaHTML(c, modoVer()); }).join(''); E.appendChild(d);
-        FV.habla([FV.frase('falta')]);
+        FV.habla([FV.frase('falta')]); G.tq = Date.now();
         d.onclick = function (e) {
           var el = e.target.closest('.carta'); if (!el) return; var c = porId(el.dataset.id);
           if (c === quita) { var h = cont.querySelector('.hueco'); if (h) h.classList.remove('hueco'); bien(el, quita, nueva); }
@@ -333,16 +337,16 @@ JUEGO.clasifica = function (cs) {
     actual = cola[i++]; fallos = 0; prog((i) + ' de ' + cola.length);
     $('cCarta').innerHTML = cartaHTML(actual, modoVer(), 'grande').replace('tocable', '');
     var g = $('cCarta').firstChild; g.style.minHeight = '0'; g.style.width = 'min(60vw,300px)'; var im = g.querySelector('img'); if (im) im.style.maxHeight = '24vh';
-    FV.habla([FV.vozCarta(actual, 'w'), FV.frase('donde_va')]);
+    FV.habla([FV.vozCarta(actual, 'w'), FV.frase('donde_va')]); G.tq = Date.now();
   }
   G.repite = null;
   E.querySelector('.cajas-cat').onclick = function (e) {
     var b = e.target.closest('.caja-cat'); if (!b || !actual) return;
     if (b.dataset.cat === actual.cat) {
-      var c = actual; actual = null; G.ac++; G.int++; FV.suena('bien'); b.classList.add('bien');
+      var c = actual; apunta(c, c, 1, 'clasif'); actual = null; G.ac++; G.int++; FV.suena('bien'); b.classList.add('bien');
       var mini = document.createElement('img'); mini.src = c.img || c.pimg || ''; mini.alt = c.texto; if (mini.src) b.querySelector('.dentro').appendChild(mini);
       tarde(function () { b.classList.remove('bien'); nueva(); }, 900);
-    } else { fallos++; G.int++; b.classList.remove('mal'); void b.offsetWidth; b.classList.add('mal'); FV.suena('mal'); if (fallos >= 2 && AJ.tranq) { G.ay++; var ok = E.querySelector('.caja-cat[data-cat="' + actual.cat.replace(/"/g, '') + '"]'); if (ok) ok.classList.add('sel'); tarde(function () { if (ok) ok.classList.remove('sel'); }, 2000); } }
+    } else { apunta(actual, { texto: 'caja ' + b.dataset.cat, cat: b.dataset.cat }, 0, 'clasif'); fallos++; G.int++; b.classList.remove('mal'); void b.offsetWidth; b.classList.add('mal'); FV.suena('mal'); if (fallos >= 2 && AJ.tranq) { G.ay++; var ok = E.querySelector('.caja-cat[data-cat="' + actual.cat.replace(/"/g, '') + '"]'); if (ok) ok.classList.add('sel'); tarde(function () { if (ok) ok.classList.remove('sel'); }, 2000); } }
   };
   nueva();
 };
@@ -361,7 +365,7 @@ JUEGO.intruso = function (cs) {
     cont.onclick = function (e) {
       var el = e.target.closest('.carta'); if (!el) return; var c = porId(el.dataset.id);
       if (c === intr) { G.det += (G.det ? ',' : '') + intr.texto; bien(el, intr, nueva); E.querySelector('.consigna').textContent = FV.textoCarta(intr) + ' es de «' + B + '»; las demás, de «' + A + '».'; }
-      else { fallos++; G.int++; el.classList.remove('mal'); void el.offsetWidth; el.classList.add('mal'); FV.habla([FV.vozCarta(c, 'w')]); if (fallos >= 2 && AJ.tranq) ayuda(cont, intr); }
+      else { apunta(intr, c, 0, 'intruso'); fallos++; G.int++; el.classList.remove('mal'); void el.offsetWidth; el.classList.add('mal'); FV.habla([FV.vozCarta(c, 'w')]); if (fallos >= 2 && AJ.tranq) ayuda(cont, intr); }
     };
   }
   nueva();
@@ -384,7 +388,7 @@ JUEGO.nombra = function (cs) {
     $('nS').onclick = function () { nivel = Math.max(nivel, 2); var s = fvPrimeraSilaba(obj.texto); $('nP').textContent = (AJ.letra === 'mayus' ? s.toLocaleUpperCase('es') : s) + '…'; FV.habla([FV.vozCarta(obj, 's')]); };
     $('nD').onclick = function () { nivel = 3; $('nP').textContent = w; FV.dice(obj, 'w'); };
     E.querySelector('.marcar').onclick = function (e) {
-      var b = e.target.closest('[data-n]'); if (!b) return; var k = b.dataset.n; cuenta[k]++; G.int++;
+      var b = e.target.closest('[data-n]'); if (!b) return; var k = b.dataset.n; G.ayR = nivel; apunta(obj, null, k !== 'no' ? 1 : 0, 'nombrar', k); G.tq = Date.now(); cuenta[k]++; G.int++;
       if (k !== 'no') G.ac++; if (k === 'pista' || k === 'ayuda') G.ay++;
       if (k === 'solo' || k === 'pista') FV.suena('bien');
       $('nP').textContent = w; tarde(nueva, k === 'no' ? 300 : 700);

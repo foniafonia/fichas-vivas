@@ -303,6 +303,8 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
 #escenario .consigna{margin:0;flex:0 0 auto}
 #escenario .grande{flex:0 0 auto}
 @media(max-width:760px){.cab{padding:10px 14px;min-height:64px;flex-wrap:wrap}.cab b{font-size:21px}.cab .der{width:100%;order:3;justify-content:flex-end;gap:5px}.btn.cab-btn{font-size:0;padding:8px 10px;min-width:40px}.btn.cab-btn:before{display:none}.envoltura{padding:24px 14px 90px}.hero{padding:26px 22px}.hero .muestra{margin-top:10px}#juego .barra{padding:9px 10px}#juego .barra .tit{font-size:17px}#escenario .cartas{min-height:56vh;grid-auto-rows:minmax(118px,1fr);gap:10px}#escenario .carta{min-height:118px;padding:8px}}
+#btnPerfil.pf-on{background:#2FA866!important;color:#fff!important;border-color:#2FA866!important}
+#btnPerfil.pf-on svg{stroke:#fff}
 </style>
 </head>
 <body>
@@ -312,6 +314,7 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
   <div class="der">
     <button class="btn cab-btn" data-ir="inicio" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
     <button class="btn cab-btn" data-ir="biblioteca" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5zM4 5.5v16M7 7h9M7 11h9"/></svg>Mi material</button>
+    <button class="btn cab-btn" id="btnPerfil" type="button" aria-haspopup="dialog"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7.5 18c.6-2.2 2.2-3.3 4.5-3.3s3.9 1.1 4.5 3.3"/></svg><span class="pf-lbl">Perfil</span></button>
     <button class="btn cab-btn" id="btnPublico" type="button" aria-haspopup="dialog"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19c.4-3 2.3-5 6-5s5.6 2 6 5M16 6.5a3 3 0 0 1 0 5.8M17 14c2.5.3 3.8 2 4 4"/></svg>Niños / Adultos</button>
     <button class="btn cab-btn" id="btnAire" type="button" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 12h10a3 3 0 1 0-3-3M4 16h13a3 3 0 1 1-3 3"/><path d="m18 8 2-2 2 2"/></svg>Modo aire</button>
   </div>
@@ -464,6 +467,7 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
   <div class="barra">
     <button class="btn cab-btn" id="jSalir" type="button">✕ Salir</button>
     <span class="tit" id="jNombre"></span>
+    <span class="prog" id="jPerfil" style="font-weight:800"></span>
     <span class="prog" id="jProg"></span>
     <button class="btn cab-btn" id="jOtra" type="button">↻ Empezar otra vez</button>
   </div>
@@ -530,6 +534,7 @@ body.tema-ninos .carta,html.publico-ninos body .carta{border-radius:20px;border-
 <script src="fv-app.js"></script>
 <script src="fv-juegos.js"></script>
 <script src="fv-aire.js"></script>
+<script src="fv-perfiles.js"></script>
 <script>
 (function () {
   var modal = document.getElementById('selectorPublico');
