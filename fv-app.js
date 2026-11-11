@@ -170,12 +170,12 @@ FV.confeti = function () {
 function setDemo(def) {
   var s = { id: def.id, titulo: def.titulo, demo: true, cartas: [], escenas: [] };
   def.partes.forEach(function (p) {
-    var pref = p === 'masc' ? 'm' : 'a', cat = p === 'masc' ? 'Mascotas' : 'Aseo', hoja = p === 'masc' ? 'masc' : 'aseo';
+    var inf = FV_DEMO_INFO[p], pref = inf.p, apag = inf.apagadas || [];
     FV_DEMO_PAL[p].forEach(function (x, i) {
       var n = (i < 10 ? '0' : '') + i;
-      s.cartas.push({ id: pref + n, img: 'demo/' + hoja + '-img-' + n + '.webp', pimg: 'demo/' + hoja + '-pal-' + n + '.webp', texto: x[0], art: x[1], cat: cat, activa: true, voz: 'demo/voz/' + pref + n });
+      s.cartas.push({ id: pref + n, img: 'demo/' + p + '-img-' + n + '.webp', pimg: 'demo/' + p + '-pal-' + n + '.webp', texto: x[0], art: x[1], cat: inf.cat, activa: apag.indexOf(i) < 0, voz: 'demo/voz/' + pref + n });
     });
-    s.escenas.push({ id: 'esc-' + p, img: 'demo/escena-' + (p === 'masc' ? 'mascotas' : 'aseo') + '.webp', titulo: p === 'masc' ? 'Mascotas en casa' : 'El cuarto de baño',
+    if (inf.esc && FV_DEMO_ZONAS[p]) s.escenas.push({ id: 'esc-' + p, img: 'demo/' + inf.esc + '.webp', titulo: inf.tesc,
       zonas: FV_DEMO_ZONAS[p].map(function (z) { return { c: pref + ((z[0] < 10 ? '0' : '') + z[0]), x: z[1], y: z[2], w: z[3], h: z[4] }; }) });
   });
   return s;
@@ -238,7 +238,7 @@ function nuevoSet() { FV.set = { id: 'fv-' + uid(), titulo: 'Mi material', carta
     return '<div class="caja"><b style="font-size:20px">' + esc(d.titulo) + '</b><p class="nota" style="margin:4px 0 10px">' + esc(d.desc) + '</p><button class="btn" data-demo="' + d.id + '" type="button">▶ Jugar</button></div>';
   }).join('');
   $('demos').addEventListener('click', function (e) { var b = e.target.closest('[data-demo]'); if (!b) return; abreSet(setDemo(FV_DEMOS.filter(function (d) { return d.id === b.dataset.demo; })[0])); });
-  $('probarDemo').addEventListener('click', function () { abreSet(setDemo(FV_DEMOS[2])); });
+  $('probarDemo').addEventListener('click', function () { abreSet(setDemo(FV_DEMOS.filter(function (d) { return d.id === 'demo-todo'; })[0])); });
 })();
 
 /* ===================== Vista de juegos ===================== */
@@ -417,7 +417,7 @@ function valida(o) {
   if (!o || o.fv !== 1 || !o.set || !Array.isArray(o.set.cartas)) return null;
   var okImg = function (u) { return typeof u === 'string' && (/^data:image\/(png|jpe?g|webp|gif);base64,/.test(u) || /^demo\/[a-z0-9\-]+\.webp$/.test(u)) ? u : undefined; };
   var okAud = function (u) { return typeof u === 'string' && /^data:audio\/[a-z0-9.+;=\-]+;base64,/.test(u) ? u : undefined; };
-  var okVoz = function (u) { return typeof u === 'string' && /^demo\/voz\/[am]\d\d$/.test(u) ? u : undefined; };
+  var okVoz = function (u) { return typeof u === 'string' && /^demo\/voz\/[a-z]\d\d$/.test(u) ? u : undefined; };
   var txt = function (t, n) { return String(t == null ? '' : t).slice(0, n || 80); };
   var s = { id: 'fv-' + uid(), titulo: txt(o.set.titulo, 60) || 'Material importado', creado: Date.now(), cartas: [], escenas: [] };
   o.set.cartas.slice(0, 300).forEach(function (c) { s.cartas.push({ id: txt(c.id, 30) || uid(), img: okImg(c.img), pimg: okImg(c.pimg), texto: txt(c.texto), art: ['', 'el', 'la', 'los', 'las', 'un', 'una'].indexOf(c.art) > -1 ? c.art : '', cat: txt(c.cat, 40), activa: c.activa !== false, audio: okAud(c.audio), voz: okVoz(c.voz) }); });
