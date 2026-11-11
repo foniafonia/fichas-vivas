@@ -254,6 +254,29 @@ JUEGO.falta = function (cs) {
 };
 
 /* ---------- 8. Sombras ---------- */
+/* Silueta real: se quita el fondo claro conectado con los bordes (relleno desde
+   fuera) y lo demás se pinta oscuro. Así las fotos con fondo blanco no salen
+   como un rectángulo negro. */
+var SIL = {};
+function silueta(c, cb) {
+  if (SIL[c.id]) { cb(SIL[c.id]); return; }
+  var im = new Image();
+  im.onload = function () {
+    var k = Math.min(1, 420 / Math.max(im.naturalWidth, im.naturalHeight)), w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
+    var cv = document.createElement('canvas'); cv.width = w; cv.height = h; var x = cv.getContext('2d'); x.drawImage(im, 0, 0, w, h);
+    var d; try { d = x.getImageData(0, 0, w, h); } catch (e) { cb(null); return; }
+    var p = d.data, fuera = new Uint8Array(w * h), pila = [];
+    function claro(i) { var r = p[i * 4], g = p[i * 4 + 1], b = p[i * 4 + 2], a = p[i * 4 + 3]; return a < 30 || (r > 218 && g > 218 && b > 218 && Math.max(r, g, b) - Math.min(r, g, b) < 34); }
+    for (var i = 0; i < w; i++) { pila.push(i, (h - 1) * w + i); } for (var j = 0; j < h; j++) { pila.push(j * w, j * w + w - 1); }
+    while (pila.length) { var q = pila.pop(); if (fuera[q] || !claro(q)) continue; fuera[q] = 1; var qx = q % w, qy = (q - qx) / w; if (qx > 0) pila.push(q - 1); if (qx < w - 1) pila.push(q + 1); if (qy > 0) pila.push(q - w); if (qy < h - 1) pila.push(q + w); }
+    var tinta = 0;
+    for (var n = 0; n < w * h; n++) { if (fuera[n]) p[n * 4 + 3] = 0; else { p[n * 4] = 22; p[n * 4 + 1] = 38; p[n * 4 + 2] = 30; p[n * 4 + 3] = 255; tinta++; } }
+    if (tinta < w * h * .02 || tinta > w * h * .97) { cb(null); return; }
+    x.putImageData(d, 0, 0); SIL[c.id] = cv.toDataURL('image/png'); cb(SIL[c.id]);
+  };
+  im.onerror = function () { cb(null); };
+  im.src = c.img;
+}
 JUEGO.sombras = function (cs) {
   var pool = conImg(cs), n = Math.max(2, Math.min(AJ.n, pool.length)), objs = objetivos(pool, AJ.r), i = 0;
   function nueva() {
@@ -261,12 +284,14 @@ JUEGO.sombras = function (cs) {
     var obj = objs[i++], fallos = 0; prog('Ronda ' + i + ' de ' + objs.length);
     var ops = opciones(obj, pool, n);
     E.innerHTML = '<div class="consigna">¿De quién es esta sombra?</div>' + cartaHTML(obj, 'img', 'grande sombra').replace('tocable', '').replace('role="button" tabindex="0"', '') + '<div class="cartas" style="' + rejilla(n) + '">' + ops.map(function (c) { return cartaHTML(c, modoVer()); }).join('') + '</div>';
-    var g = E.querySelector('.grande'); g.style.minHeight = '0'; g.querySelector('img').style.maxHeight = '28vh';
+    var g = E.querySelector('.grande'), gi = g.querySelector('img'); g.style.minHeight = '0'; gi.style.maxHeight = '28vh';
+    g.classList.remove('sombra'); gi.style.visibility = 'hidden';
+    silueta(obj, function (u) { if (u) { gi.src = u; } else g.classList.add('sombra'); gi.style.visibility = ''; });
     if (i === 1) FV.habla([FV.frase('sombra')]);
     G.repite = null; var cont = E.querySelector('.cartas');
     cont.onclick = function (e) {
       var el = e.target.closest('.carta'); if (!el) return; var c = porId(el.dataset.id);
-      if (c === obj) { g.classList.remove('sombra'); bien(el, obj, nueva); } else { fallos++; mal(el, c, obj); if (fallos >= 2 && AJ.tranq) ayuda(cont, obj); }
+      if (c === obj) { g.classList.remove('sombra'); gi.src = obj.img; bien(el, obj, nueva); } else { fallos++; mal(el, c, obj); if (fallos >= 2 && AJ.tranq) ayuda(cont, obj); }
     };
   }
   nueva();
