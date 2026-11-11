@@ -10,7 +10,7 @@ var FV = window.FV, $ = FV.$;
 var VER = '0.10.14';
 var BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@' + VER;
 var MODELO = 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
-var activo = false, cargando = false, detector = null, video = null, stream = null, raf = 0, ultimo = 0;
+var turno = 0, activo = false, cargando = false, detector = null, video = null, stream = null, raf = 0, ultimo = 0;
 var cursor = null, estado = null, aro = null, sx = -1, sy = -1, objetivo = null, desde = 0, bloqueado = null, pellizco = false, sinMano = 0;
 var DWELL = (FV.aj.dwell || 10) * 100, FPS_MS = 50, CIRC = 2 * Math.PI * 25;
 FV.aireDwell = function (ms) { DWELL = ms; };
@@ -37,9 +37,10 @@ function enciende() {
     try { localStorage.setItem('fv-aire-ok', '1'); } catch (e) {}
   }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('Este navegador no permite usar la cámara.'); return; }
+  var mio = ++turno; function sigue(x) { if (mio !== turno) throw new Error('cancelado'); return x; }
   cargando = true; crea(); msg('Cargando el modo aire…'); boton.setAttribute('aria-pressed', 'true'); etiqueta('Cargando…');
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false }).then(function (st) {
-    stream = st; video.srcObject = st; return video.play();
+    if (mio !== turno) { st.getTracks().forEach(function (t) { t.stop(); }); throw new Error('cancelado'); } stream = st; video.srcObject = st; return video.play();
   }).then(function () {
     if (detector) return detector;
     return import(BASE + '/vision_bundle.mjs').then(function (mp) {
@@ -48,16 +49,16 @@ function enciende() {
         return mp.HandLandmarker.createFromOptions(fs, op('GPU')).catch(function () { return mp.HandLandmarker.createFromOptions(fs, op('CPU')); });
       });
     }).then(function (d) { detector = d; return d; });
-  }).then(function () {
+  }).then(sigue).then(function () {
     cargando = false; activo = true; document.body.classList.add('aire-on'); etiqueta('Aire: sí');
     msg('Levanta la mano y apunta con el dedo índice'); FV.cuenta('aire'); bucle();
   }).catch(function (e) {
-    cargando = false; apaga();
+    cargando = false; if (mio !== turno || /cancelado/.test(String(e && e.message))) return; apaga();
     alert(/Permission|NotAllowed/i.test(String(e && e.name || e)) ? 'Sin permiso para la cámara. Puedes darlo en el candado de la barra de direcciones.' : 'No se ha podido activar el modo aire. Comprueba la conexión y la cámara.');
   });
 }
 function apaga() {
-  activo = false; cancelAnimationFrame(raf); raf = 0;
+  turno++; cargando = false; activo = false; cancelAnimationFrame(raf); raf = 0;
   if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
   quita(); document.body.classList.remove('aire-on'); boton.setAttribute('aria-pressed', 'false'); etiqueta('Modo aire');
   objetivo = null; bloqueado = null; sx = sy = -1;
@@ -86,6 +87,7 @@ function bucle() {
   if (sx < 0) { sx = x; sy = y; } else { sx += (x - sx) * .4; sy += (y - sy) * .4; }
   cursor.style.left = sx + 'px'; cursor.style.top = sy + 'px';
   var el = document.elementFromPoint(sx, sy), t = el && el.closest ? el.closest(SEL) : null;
+  if (t && !$('juego').classList.contains('oculto') && (!t.closest('#juego') || t.matches('a[data-sk], #jSalir, #jOtra'))) t = null;
   if (t && (t.disabled || t.getAttribute('aria-disabled') === 'true' || t.classList.contains('hecha'))) t = null;
   var d = Math.hypot(p.x - pu.x, p.y - pu.y), mano = Math.hypot(lm[0].x - lm[9].x, lm[0].y - lm[9].y) || .2;
   var junto = d < mano * .32;

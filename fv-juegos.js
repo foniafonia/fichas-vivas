@@ -53,6 +53,8 @@ function rejilla(n) {
   if (n === 4 && cols === 3) cols = 2; if (n === 6 && cols === 4) cols = 3; if (n === 9 && cols > 3 && cols < 9) cols = 3;
   return 'grid-template-columns:repeat(' + cols + ',minmax(0,' + w + 'px))';
 }
+function igual(a, b) { return a === b || !!(a && b && FV.textoCarta(a) === FV.textoCarta(b)); }
+function unico(L) { var vistos = {}; return L.filter(function (c) { var k = FV.textoCarta(c); if (vistos[k]) return false; vistos[k] = 1; return true; }); }
 function porId(id) { return FV.set.cartas.filter(function (c) { return c.id === id; })[0]; }
 function objetivos(lista, n) { var r = [], ult = null; while (r.length < n && lista.length) { var b = baraja(lista); b.forEach(function (c) { if (r.length < n && c !== ult) { r.push(c); ult = c; } }); if (lista.length === 1) break; } return r; }
 function opciones(obj, pool, n) { return baraja([obj].concat(baraja(pool.filter(function (c) { return c !== obj && FV.textoCarta(c) !== FV.textoCarta(obj); })).slice(0, Math.max(1, n - 1)))); }
@@ -70,9 +72,9 @@ document.addEventListener('keydown', function (e) {
   if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('tocable') && e.target.tagName !== 'BUTTON') { e.preventDefault(); e.target.click(); }
 });
 function fin(texto) {
-  limpia();
+  limpia(); G.bloq = false;
   var seg = (Date.now() - G.t0) / 1000;
-  FV.registra({ juego: NOMBRE[G.id], aciertos: G.ac, intentos: G.int, ayudas: G.ay, seg: seg, detalle: G.det }); var sesP = FV.mide ? FV.mide.fin() : null;
+  FV.registra({ juego: NOMBRE[G.id], aciertos: G.sinPct ? null : G.ac, intentos: G.int, ayudas: G.ay, seg: seg, detalle: G.det }); var sesP = FV.mide ? FV.mide.fin() : null;
   FV.suena('fin'); FV.confeti(); FV.habla([FV.frase('terminado')]); FV.cuenta('fin_' + G.id);
   var res = texto || (AJ.tranq ? 'Lo has hecho genial.' : G.ac + ' aciertos en ' + G.int + ' intentos' + (G.ay ? ' · ' + G.ay + ' ayudas' : '') + '.');
   E.innerHTML = '<div class="fin"><div class="gr">🎉</div><h2 style="margin:0 0 6px">¡Terminado!</h2><p style="font-size:20px">' + esc(res) + '</p>' +
@@ -85,10 +87,11 @@ function fin(texto) {
 function apunta(o, e, ok, k, x) { if (!FV.mide || !G) return; FV.mide.ev({ o: o, e: e, ok: ok, ms: Date.now() - G.tq, ay: G.ayR, k: k, x: x }); if (ok) G.ayR = 0; }
 FV._apunta = apunta;
 function bien(el, c, sig) {
+  if (sig) G.bloq = true;
   if (c) apunta(c, c, 1);
   G.ac++; G.int++; if (el) el.classList.add('bien'); FV.suena('bien');
   FV.habla([FV.frase(Math.random() < .5 ? 'eso_es' : 'muy_bien')].concat(c ? [FV.vozCarta(c, 'w')] : []));
-  if (sig) tarde(function () { if (G) G.tq = Date.now(); sig(); }, 1500);
+  if (sig) tarde(function () { if (G) { G.tq = Date.now(); G.bloq = false; } sig(); }, 1500);
 }
 function mal(el, tocada, buscada) {
   if (buscada) apunta(buscada, tocada, 0);
@@ -100,6 +103,7 @@ function ayuda(cont, buscada) {
   G.ay++; G.ayR = 1; var e = cont.querySelector('[data-id="' + buscada.id + '"]'); if (e) e.classList.add('sel');
 }
 function oir(f) { return '<button class="btn sec peq tocable" type="button" data-oir="1" aria-label="Volver a oír">🔊 Oír</button>'; }
+E.addEventListener('click', function (e) { if (G && G.bloq && !e.target.closest('.fin')) { e.stopPropagation(); e.preventDefault(); } }, true);
 E.addEventListener('click', function (e) { var b = e.target.closest('[data-oir]'); if (b && G && G.repite) G.repite(); });
 
 FV.empieza = function (id) {
@@ -129,7 +133,7 @@ JUEGO.escucha = function (cs) {
   function nueva() {
     if (ronda >= R) { fin(); return; }
     ronda++; fallosR = 0; prog('Ronda ' + ronda + ' de ' + R);
-    var vista = baraja(pool).slice(0, n), seq = baraja(vista).slice(0, k), paso = 0;
+    var vista = unico(baraja(pool)).slice(0, n), seq = baraja(vista).slice(0, k), paso = 0;
     E.innerHTML = '<div class="consigna">' + (k > 1 ? 'Toca en orden ' : '¿Dónde está?') + ' ' + oir() + '</div><div class="cartas" style="' + rejilla(n) + '">' + vista.map(function (c) { return cartaHTML(c, modoVer()); }).join('') + '</div>';
     var cont = E.querySelector('.cartas');
     G.repite = function () {
@@ -140,7 +144,7 @@ JUEGO.escucha = function (cs) {
     cont.onclick = function (e) {
       var el = e.target.closest('.carta'); if (!el || el.classList.contains('bien')) return;
       var c = porId(el.dataset.id), obj = seq[paso];
-      if (c === obj) {
+      if (igual(c, obj)) {
         paso++; el.classList.add('bien');
         if (k > 1) { var m = document.createElement('span'); m.className = 'marca'; m.style.background = 'var(--verde)'; m.textContent = paso; el.appendChild(m); }
         if (k > 1) apunta(obj, c, 1, 'paso'); if (paso >= seq.length) { if (k > 1) apunta(seq[0], null, 1, 'secuencia'); G.det += (G.det ? ',' : '') + seq.map(function (x) { return x.texto; }).join('+') + (fallosR ? '(' + fallosR + ')' : ''); bien(null, k === 1 ? obj : null, nueva); }
@@ -169,7 +173,7 @@ JUEGO.lee = function (cs) {
     if (i === 1) FV.habla([FV.frase('lee')]);
     cont.onclick = function (e) {
       var el = e.target.closest('.carta'); if (!el) return; var c = porId(el.dataset.id);
-      if (c === obj) bien(el, obj, nueva); else { fallos++; mal(el, c, obj); if (fallos >= 2 && AJ.tranq) ayuda(cont, obj); }
+      if (igual(c, obj)) bien(el, obj, nueva); else { fallos++; mal(el, c, obj); if (fallos >= 2 && AJ.tranq) ayuda(cont, obj); }
     };
   }
   nueva();
@@ -198,7 +202,7 @@ JUEGO.une = function (cs) {
         [elegido, el].forEach(function (x) { x.classList.remove('sel'); x.classList.add('bien'); x.style.borderColor = col; var m = document.createElement('span'); m.className = 'marca'; m.style.background = col; m.textContent = hechas; x.appendChild(m); x.classList.add('hecha'); x.style.opacity = '.75'; });
         apunta(a, b, 1, 'une'); G.tq = Date.now(); elegido = null; G.ac++; G.int++; FV.suena('bien'); FV.dice(a, 'w');
         if (hechas >= n) tarde(nueva, 1400);
-      } else { apunta(a, b, 0, 'une'); mal(el, null, null); elegido.classList.remove('sel'); elegido = null; }
+      } else { mal(el, b, a); elegido.classList.remove('sel'); elegido = null; }
     };
   }
   nueva();
@@ -234,7 +238,7 @@ JUEGO.falta = function (cs) {
   function nueva() {
     if (ronda >= R) { fin(); return; }
     ronda++; prog('Ronda ' + ronda + ' de ' + R);
-    var vista = baraja(cs).slice(0, n), quita = vista[Math.floor(Math.random() * n)], fallos = 0;
+    var vista = unico(baraja(cs)).slice(0, n), quita = vista[Math.floor(Math.random() * n)], fallos = 0;
     E.innerHTML = '<div class="consigna">Mira bien todas las cartas <button class="btn oro tocable" id="fYa" type="button">Ya me las sé</button></div><div class="cartas" style="' + rejilla(n) + '">' + vista.map(function (c) { return cartaHTML(c, modoVer()); }).join('') + '</div>';
     FV.habla([FV.frase('mira')]); G.repite = null;
     $('fYa').onclick = function () {
@@ -248,7 +252,7 @@ JUEGO.falta = function (cs) {
         FV.habla([FV.frase('falta')]); G.tq = Date.now();
         d.onclick = function (e) {
           var el = e.target.closest('.carta'); if (!el) return; var c = porId(el.dataset.id);
-          if (c === quita) { var h = cont.querySelector('.hueco'); if (h) h.classList.remove('hueco'); bien(el, quita, nueva); }
+          if (igual(c, quita)) { var h = cont.querySelector('.hueco'); if (h) h.classList.remove('hueco'); bien(el, quita, nueva); }
           else { fallos++; mal(el, c, quita); if (fallos >= 2 && AJ.tranq) ayuda(d, quita); }
         };
       }, 1200);
@@ -295,7 +299,7 @@ JUEGO.sombras = function (cs) {
     G.repite = null; var cont = E.querySelector('.cartas');
     cont.onclick = function (e) {
       var el = e.target.closest('.carta'); if (!el) return; var c = porId(el.dataset.id);
-      if (c === obj) { g.classList.remove('sombra'); gi.src = obj.img; bien(el, obj, nueva); } else { fallos++; mal(el, c, obj); if (fallos >= 2 && AJ.tranq) ayuda(cont, obj); }
+      if (igual(c, obj)) { g.classList.remove('sombra'); gi.src = obj.img; bien(el, obj, nueva); } else { fallos++; mal(el, c, obj); if (fallos >= 2 && AJ.tranq) ayuda(cont, obj); }
     };
   }
   nueva();
@@ -319,7 +323,7 @@ JUEGO.detective = function (cs) {
     G.repite = null; var cont = E.querySelector('.cartas');
     cont.onclick = function (e) {
       var el = e.target.closest('.carta'); if (!el) return; var c = porId(el.dataset.id);
-      if (c === obj) { clearInterval(G.intervalo); tapas.forEach(function (t) { t.classList.add('fuera'); }); G.det += (G.det ? ',' : '') + obj.texto + ':' + (12 - orden.length); bien(el, obj, nueva); }
+      if (igual(c, obj)) { clearInterval(G.intervalo); tapas.forEach(function (t) { t.classList.add('fuera'); }); G.det += (G.det ? ',' : '') + obj.texto + ':' + (12 - orden.length); bien(el, obj, nueva); }
       else { fallos++; mal(el, c, obj); }
     };
   }
@@ -364,7 +368,7 @@ JUEGO.intruso = function (cs) {
     var cont = E.querySelector('.cartas');
     cont.onclick = function (e) {
       var el = e.target.closest('.carta'); if (!el) return; var c = porId(el.dataset.id);
-      if (c === intr) { G.det += (G.det ? ',' : '') + intr.texto; bien(el, intr, nueva); E.querySelector('.consigna').textContent = FV.textoCarta(intr) + ' es de «' + B + '»; las demás, de «' + A + '».'; }
+      if (igual(c, intr)) { G.det += (G.det ? ',' : '') + intr.texto; bien(el, intr, nueva); E.querySelector('.consigna').textContent = FV.textoCarta(intr) + ' es de «' + B + '»; las demás, de «' + A + '».'; }
       else { apunta(intr, c, 0, 'intruso'); fallos++; G.int++; el.classList.remove('mal'); void el.offsetWidth; el.classList.add('mal'); FV.habla([FV.vozCarta(c, 'w')]); if (fallos >= 2 && AJ.tranq) ayuda(cont, intr); }
     };
   }
@@ -388,10 +392,10 @@ JUEGO.nombra = function (cs) {
     $('nS').onclick = function () { nivel = Math.max(nivel, 2); var s = fvPrimeraSilaba(obj.texto); $('nP').textContent = (AJ.letra === 'mayus' ? s.toLocaleUpperCase('es') : s) + '…'; FV.habla([FV.vozCarta(obj, 's')]); };
     $('nD').onclick = function () { nivel = 3; $('nP').textContent = w; FV.dice(obj, 'w'); };
     E.querySelector('.marcar').onclick = function (e) {
-      var b = e.target.closest('[data-n]'); if (!b) return; var k = b.dataset.n; G.ayR = nivel; apunta(obj, null, k !== 'no' ? 1 : 0, 'nombrar', k); G.tq = Date.now(); cuenta[k]++; G.int++;
-      if (k !== 'no') G.ac++; if (k === 'pista' || k === 'ayuda') G.ay++;
+      var b = e.target.closest('[data-n]'); if (!b) return; var k = b.dataset.n; G.ayR = nivel; apunta(obj, null, (k === 'solo' || k === 'pista') ? 1 : 0, 'nombrar', k); G.bloq = true; G.tq = Date.now(); cuenta[k]++; G.int++;
+      if (k === 'solo' || k === 'pista') G.ac++; if (k === 'pista' || k === 'ayuda') G.ay++;
       if (k === 'solo' || k === 'pista') FV.suena('bien');
-      $('nP').textContent = w; tarde(nueva, k === 'no' ? 300 : 700);
+      $('nP').textContent = w; tarde(function () { G.bloq = false; nueva(); }, k === 'no' ? 300 : 700);
     };
   }
   nueva();
@@ -411,7 +415,7 @@ function pintaEscena(esc0, ver) {
     var d = document.createElement('div'); d.className = 'zona tocable' + (ver ? ' ver' : ''); d.dataset.zi = i; d.dataset.c = z.c;
     d.style.left = z.x * 100 + '%'; d.style.top = z.y * 100 + '%'; d.style.width = z.w * 100 + '%'; d.style.height = z.h * 100 + '%'; w.appendChild(d);
   });
-  var im = w.querySelector('img'); function ajusta() { var r = im.getBoundingClientRect(); w.style.width = r.width + 'px'; } im.onload = ajusta;
+  FV.ajustaEscena(w, .7);
   return w;
 }
 JUEGO.escena = function () {
@@ -459,7 +463,7 @@ JUEGO.ruleta = function (cs) {
     if (reducido) total = 1;
     function gira() {
       actual = cs[Math.floor(Math.random() * cs.length)]; muestra(actual); paso++;
-      if (paso >= total) { G.intervalo = null; giros++; G.int++; G.ac++; var p = P[Math.floor(Math.random() * P.length)]; $('rP').textContent = FV_FRASES[p]; FV.suena('bien'); FV.habla([FV.vozCarta(actual, 'w'), FV.frase(p)]); prog(giros + ' giros'); return; }
+      if (paso >= total) { G.intervalo = null; giros++; G.int++; G.sinPct = true; var p = P[Math.floor(Math.random() * P.length)]; $('rP').textContent = FV_FRASES[p]; FV.suena('bien'); FV.habla([FV.vozCarta(actual, 'w'), FV.frase(p)]); prog(giros + ' giros'); return; }
       G.intervalo = setTimeout(gira, 60 + paso * paso * 1.6);
     }
     G.intervalo = 1; gira();
@@ -472,6 +476,7 @@ JUEGO.bingo = function (cs) {
   var bolsa = baraja(cs), salidas = [];
   E.innerHTML = '<div class="consigna">Bingo cantado</div><div id="bC"></div><div class="fila" style="justify-content:center"><button class="btn oro tocable" id="bS" type="button" style="font-size:22px;padding:14px 30px">Sacar carta</button><button class="btn sec tocable" id="bR" type="button">Repetir</button><button class="btn sec tocable" id="bF" type="button">¡Bingo! Terminar</button></div><p class="nota" id="bQ"></p><div class="cartas" id="bH" style="grid-template-columns:repeat(auto-fill,minmax(90px,1fr));max-width:1000px"></div>';
   G.repite = null; var actual = null;
+  G.sinPct = true;
   $('bS').onclick = function () {
     if (!bolsa.length) { $('bQ').textContent = 'Ya han salido todas.'; return; }
     actual = bolsa.shift(); salidas.push(actual); G.int++;

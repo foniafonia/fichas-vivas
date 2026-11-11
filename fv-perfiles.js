@@ -59,7 +59,7 @@ function intentos(ses) {
     var cur = null;
     s.ev.forEach(function (e, i) {
       if (e.k === 'secuencia') return;
-      if (e.k === 'nombrar') { L.push({ si: si, s: s, o: e.o, oc: e.oc, ok1: e.x === 'solo', ok: e.x !== 'no', ms: null, err: [], ay: e.ay, k: e.k, x: e.x }); return; }
+      if (e.k === 'nombrar') { L.push({ si: si, s: s, o: e.o, oc: e.oc, ok1: e.x === 'solo', ok: e.x === 'solo' || e.x === 'pista', ms: null, err: [], ay: e.ay, k: e.k, x: e.x }); return; }
       if (!cur || cur.o !== e.o || cur.cerrado) { cur = { si: si, s: s, o: e.o, oc: e.oc, ok1: false, ok: false, ms: null, err: [], ay: 0, k: e.k, t: e.t }; L.push(cur); }
       if (e.ay) cur.ay = Math.max(cur.ay, e.ay);
       if (e.ok) { cur.ok = true; cur.ok1 = !cur.err.length; cur.ms = e.ms; cur.cerrado = true; }

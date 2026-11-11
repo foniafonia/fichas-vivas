@@ -227,6 +227,13 @@ FV.ir = function (v) {
 document.querySelectorAll('[data-ir]').forEach(function (b) { b.addEventListener('click', function () { FV.ir(b.dataset.ir); }); });
 function abreSet(s, vista) { FV.set = s; cuenta('abre_' + (s.demo ? s.id.replace(/-/g, '_') : 'propio')); FV.ir(vista || 'juegos'); }
 FV.abreSet = abreSet;
+/* La caja de una escena mide exactamente lo que el dibujo (para que las zonas caigan encima). */
+FV.ajustaEscena = function (w, altoMax) {
+  var im = w && w.querySelector('img'); if (!im) return;
+  function hazlo() { if (!im.naturalWidth || !w.isConnected) return; var r = im.naturalWidth / im.naturalHeight, padre = w.parentNode.getBoundingClientRect().width || window.innerWidth, W = Math.min(padre, window.innerWidth * .96, 1100), H = window.innerHeight * (altoMax || .72), ancho = Math.min(W, H * r); w.style.width = Math.floor(ancho) + 'px'; im.style.width = '100%'; im.style.height = 'auto'; im.style.maxHeight = 'none'; }
+  if (im.complete) hazlo(); else im.addEventListener('load', hazlo);
+  if (!w._fvRes) { w._fvRes = 1; var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(hazlo, 120); }); }
+};
 function nuevoSet() { FV.set = { id: 'fv-' + uid(), titulo: 'Mi material', cartas: [], escenas: [], creado: Date.now() }; cuenta('material_nuevo'); }
 
 /* ===================== Portada ===================== */
@@ -588,7 +595,7 @@ function abreZonas(i) {
   zEsc = i; var e = FV.set.escenas[i]; $('zonasEd').classList.remove('oculto');
   var cs = FV.set.cartas.filter(function (c) { return c.texto; }); zCarta = zCarta && cs.some(function (c) { return c.id === zCarta; }) ? zCarta : (cs[0] && cs[0].id);
   $('zCartas').innerHTML = cs.map(function (c) { return '<button class="chip" type="button" data-zc="' + esc(c.id) + '" aria-pressed="' + (c.id === zCarta) + '">' + esc(c.texto.toLocaleLowerCase('es')) + '</button>'; }).join('') || '<p class="nota">Primero pon nombre a las cartas.</p>';
-  $('zWrap').innerHTML = '<img src="' + esc(e.img) + '" alt="" draggable="false">';
+  $('zWrap').innerHTML = '<img src="' + esc(e.img) + '" alt="" draggable="false">'; FV.ajustaEscena($('zWrap'), .6);
   pintaZonas();
 }
 function pintaZonas() {
@@ -666,10 +673,11 @@ function imprime(tipo) {
   $('abeja').addEventListener('click', abre);
   $('mejX').addEventListener('click', function () { m.classList.add('oculto'); });
   m.addEventListener('click', function (e) { if (e.target === m) m.classList.add('oculto'); });
-  $('mejChips').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b || b.getAttribute('aria-pressed') === 'true') return; b.setAttribute('aria-pressed', 'true'); cuenta('mejora_' + b.dataset.m); cuenta('mejora_total'); ok.textContent = 'Anotado. Gracias: así decidimos qué hacer primero.'; });
+  $('mejChips').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b || b.getAttribute('aria-pressed') === 'true') return; b.setAttribute('aria-pressed', 'true'); cuenta('mejora_' + b.dataset.m); cuenta('mejora_total'); ok.textContent = 'Voto sumado. Lo más votado es lo siguiente que hacemos.'; });
   function limpia(t) { return (t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z ]/g, '').trim().replace(/ +/g, '_').slice(0, 40); }
-  $('mejBtn').addEventListener('click', function () { var t = limpia($('mejTxt').value); if (!t) { ok.textContent = 'Escribe una idea.'; return; } cuenta('mejora_otra_' + t); cuenta('mejora_total'); ok.textContent = 'Anotado. Gracias.'; $('mejTxt').value = ''; });
-  $('falBtn').addEventListener('click', function () { var t = limpia($('falTxt').value); cuenta('fallo_total'); if (t) cuenta('fallo_' + t); ok.textContent = 'Recibido. Lo revisamos.'; $('falTxt').value = ''; });
+  var FALLOS = [['no_suena', 'No se oye la voz'], ['hoja', 'La hoja no se corta bien'], ['zonas', 'Las zonas de la escena no coinciden'], ['cuelga', 'Se queda colgado'], ['aire', 'El modo aire no va'], ['imprimir', 'No imprime'], ['otro', 'Otra cosa']];
+  $('falChips').innerHTML = FALLOS.map(function (c) { return '<button class="chip" type="button" data-f="' + c[0] + '" aria-pressed="false">' + c[1] + '</button>'; }).join('');
+  $('falChips').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b || b.getAttribute('aria-pressed') === 'true') return; b.setAttribute('aria-pressed', 'true'); cuenta('fallo_' + b.dataset.f); cuenta('fallo_total'); ok.textContent = 'Aviso apuntado. Para contarnos el detalle, escríbelo en ColmenIA.'; });
   FV.abreMejora = abre;
 })();
 
