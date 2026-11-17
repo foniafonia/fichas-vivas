@@ -714,7 +714,7 @@ function imprime(tipo) {
     var LI = [['✂', 'Recorta tus fotos', 'Al subir una foto, arrastra el dedo sobre lo que quieres quedarte. Y en cada carta tienes el botón ✂.'],
       ['🧩', 'Todo el vocabulario', 'Los 889 pictos del banco, abiertos y con buscador. Escribe la palabra, marca y juega o añádelos a tu material.'],
       ['✨', 'Crea material con IA', 'Escribe qué quieres trabajar, copia el encargo en ChatGPT o Claude, pega lo que te conteste y se crea solo, con sus pictos.'],
-      ['🐝', 'La abeja siempre llega', 'Lo que escribas nos llega aunque cierres. Y puedes mandarnos imágenes.']];
+      ['🐝', 'La abeja siempre llega', 'Lo que escribas nos llega aunque cierres. Para pasarnos fotos o material, pega un enlace de OneDrive o Google Drive.']];
     av.innerHTML = '<div class="panel" style="max-width:600px" role="dialog" aria-label="Novedades"><h2 style="margin-top:0">🐝 ¡Novedades en Fichas vivas!</h2><p style="margin:0 0 10px">Hemos hecho lo que nos pediste:</p>' +
       LI.map(function (x) { return '<div style="display:flex;gap:12px;align-items:flex-start;background:#fff;border:2px solid #e6dcc8;border-radius:14px;padding:10px 12px;margin:8px 0"><span style="font-size:28px;line-height:1">' + x[0] + '</span><div><b style="font-size:18px">' + esc(x[1]) + '</b><div>' + esc(x[2]) + '</div></div></div>'; }).join('') +
       '<div class="fila" style="margin-top:12px"><button class="btn oro" type="button" data-av="ia">✨ Probar a crear con IA</button><button class="btn" type="button" data-av="banco">🧩 Ver el banco</button><button class="btn sec" type="button" data-av="x">Entendido</button></div></div>';
@@ -739,47 +739,22 @@ function imprime(tipo) {
   /* Lo escrito se envía siempre: al cerrar la abeja y al salir de la página. */
   function pendiente() {
     var fallo = $('falTxt') && $('falTxt').value.trim(), mej = $('mejTxt') && $('mejTxt').value.trim();
-    return { fallo: fallo, mej: mej, hay: !!(fallo || mej || imgs.length) };
+    return { fallo: fallo, mej: mej, hay: !!(fallo || mej || enlace()) };
   }
   function enviaPendiente(motivo) {
     var p = pendiente(); if (!p.hay || $('mejEnvia').disabled) return;
     var firma = $('mejFirma').value.trim().slice(0, 60);
-    if (p.mej) { FV.enviaBuzon('mejora (' + motivo + ')', p.mej, firma); $('mejTxt').value = ''; }
-    if (p.fallo) { FV.enviaBuzon('algo no va (' + motivo + ')', p.fallo, firma); $('falTxt').value = ''; }
-    mandaImgs(firma, motivo); cuenta('buzon_' + motivo);
+    if (p.fallo) { FV.enviaBuzon('algo no va (' + motivo + ')', p.mej ? p.fallo : conEnlace(p.fallo), firma); $('falTxt').value = ''; }
+    if (p.mej || !p.fallo) FV.enviaBuzon('mejora (' + motivo + ')', conEnlace(p.mej), firma);
+    $('mejTxt').value = ''; $('mejEnl').value = ''; cuenta('buzon_' + motivo);
   }
   function cierra() { enviaPendiente('al_cerrar'); m.classList.add('oculto'); }
   window.addEventListener('pagehide', function () { enviaPendiente('al_salir'); });
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') enviaPendiente('al_salir'); });
-  /* Imágenes: cada una, reducida, va en su propio mensaje (el buzón admite 16 KB por mensaje). */
-  var imgs = [];
-  function miniatura(file, cb) {
-    var url = URL.createObjectURL(file), im = new Image();
-    im.onload = function () {
-      var max = 520, q = .7, u = '';
-      for (var vuelta = 0; vuelta < 12; vuelta++) {
-        var k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight)), cv = document.createElement('canvas');
-        cv.width = Math.round(im.naturalWidth * k); cv.height = Math.round(im.naturalHeight * k);
-        var cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(im, 0, 0, cv.width, cv.height);
-        u = cv.toDataURL('image/webp', q); if (u.indexOf('data:image/webp') !== 0) u = cv.toDataURL('image/jpeg', q);
-        if (u.length < 11500) break;
-        if (q > .35) q -= .12; else max = Math.round(max * .8);
-      }
-      URL.revokeObjectURL(url); cb(u.length < 11500 ? u : null);
-    };
-    im.onerror = function () { URL.revokeObjectURL(url); cb(null); };
-    im.src = url;
-  }
-  function pintaImgs() { $('mejImgs').innerHTML = imgs.map(function (u, i) { return '<span style="position:relative;display:inline-block"><img src="' + u + '" alt="" style="height:64px;border-radius:8px;border:2px solid #e6dcc8"><button type="button" data-qi="' + i + '" class="btn sec peq" style="position:absolute;top:-8px;right:-8px;min-height:0;padding:0 6px" aria-label="Quitar imagen">✕</button></span>'; }).join(''); }
-  $('mejImg').addEventListener('change', function () {
-    var fs = [].slice.call(this.files, 0, 3 - imgs.length); this.value = '';
-    fs.forEach(function (f) { miniatura(f, function (u) { if (u && imgs.length < 3) { imgs.push(u); pintaImgs(); } else if (!u) ok.textContent = 'Esa imagen no se ha podido preparar.'; }); });
-  });
-  $('mejImgs').addEventListener('click', function (e) { var b = e.target.closest('[data-qi]'); if (b) { imgs.splice(+b.dataset.qi, 1); pintaImgs(); } });
-  function mandaImgs(firma, motivo) {
-    if (!imgs.length) return; var L = imgs.slice(); imgs = []; pintaImgs();
-    L.forEach(function (u, i) { FV.enviaBuzon('imagen ' + (i + 1) + ' de ' + L.length + (motivo ? ' (' + motivo + ')' : ''), u, firma); });
-  }
+  /* Enlace de OneDrive o Drive: va dentro del mensaje (nada de subir imágenes). */
+  function enlace() { var u = ($('mejEnl') && $('mejEnl').value.trim()) || ''; return /^https:\/\/\S+$/i.test(u) ? u.slice(0, 600) : ''; }
+  function conEnlace(t) { var u = enlace(); return u ? (t ? t + '\n\n' : '') + 'Enlace: ' + u : t; }
+
   $('mejX').addEventListener('click', cierra);
   m.addEventListener('click', function (e) { if (e.target === m) cierra(); });
   $('mejChips').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b || b.getAttribute('aria-pressed') === 'true') return; b.setAttribute('aria-pressed', 'true'); cuenta('mejora_' + b.dataset.m); cuenta('mejora_total'); ok.textContent = 'Voto sumado. Lo más votado es lo siguiente que hacemos.'; });
@@ -800,7 +775,7 @@ function imprime(tipo) {
   FV.enviaBuzon = function (tipo, txt, firma, cb) {
     var v = ['inicio', 'juegos', 'editar', 'biblioteca'].filter(function (x) { var e = $('v-' + x); return e && !e.classList.contains('oculto'); })[0] || '';
     var c = { id: 'c0000-fv-' + uid(), caso: '0000', terapeuta: '', material: 'comentario', version: 'fichas-vivas',
-      contenido: 'FICHAS VIVAS · ' + tipo.toUpperCase() + '\n' + (firma ? 'De: ' + firma + '\n' : '') + 'Pantalla: ' + v + (FV.set ? ' · material «' + FV.set.titulo + '»' : '') + '\nAparato: ' + navigator.userAgent.slice(0, 160) + '\n\n' + String(txt).slice(0, /^imagen/.test(tipo) ? 12000 : 2000) + '\n\nSin datos de pacientes.' };
+      contenido: 'FICHAS VIVAS · ' + tipo.toUpperCase() + '\n' + (firma ? 'De: ' + firma + '\n' : '') + 'Pantalla: ' + v + (FV.set ? ' · material «' + FV.set.titulo + '»' : '') + '\nAparato: ' + navigator.userAgent.slice(0, 160) + '\n\n' + String(txt).slice(0, 2700) + '\n\nSin datos de pacientes.' };
     manda(c, function (bien) { if (!bien) ponCola(leeCola().concat([c])); cuenta(bien ? 'buzon_ok' : 'buzon_cola'); if (cb) cb(bien); });
   };
   setTimeout(reintenta, 3000); window.addEventListener('online', reintenta);
@@ -808,12 +783,11 @@ function imprime(tipo) {
     var fallo = !m.querySelector('[data-pp="fallo"]').classList.contains('oculto');
     var ta = $(fallo ? 'falTxt' : 'mejTxt'), t = ta.value.trim();
     var chips = [].map.call(m.querySelectorAll((fallo ? '#falChips' : '#mejChips') + ' [aria-pressed="true"]'), function (b) { return b.textContent; });
-    if (!t && !chips.length && !imgs.length) { ok.textContent = 'Escribe algo, toca una opción o añade una imagen.'; ta.focus(); return; }
-    if (!t && !chips.length) { mandaImgs($('mejFirma').value.trim().slice(0, 60)); ok.textContent = '¡Recibido! Nos han llegado tus imágenes. Gracias 🐝'; return; }
-    mandaImgs($('mejFirma').value.trim().slice(0, 60));
+    if (!t && !chips.length && !enlace()) { ok.textContent = 'Escribe algo, toca una opción o pega un enlace.'; ta.focus(); return; }
+    t = conEnlace(t);
     var b = $('mejEnvia'); b.disabled = true; ok.textContent = 'Enviando…';
     FV.enviaBuzon(fallo ? 'algo no va' : 'mejora', (chips.length ? 'Marcó: ' + chips.join(', ') + '\n' : '') + t, $('mejFirma').value.trim().slice(0, 60), function (bien) {
-      b.disabled = false; if (bien) ta.value = '';
+      b.disabled = false; if (bien) { ta.value = ''; $('mejEnl').value = ''; }
       ok.textContent = bien ? '¡Recibido! Nos ha llegado al equipo. Gracias 🐝' : 'Ahora no hay conexión: lo guardamos y se envía solo en cuanto vuelva.';
     });
   });
