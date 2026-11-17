@@ -711,7 +711,7 @@ function imprime(tipo) {
   if (visto < FV_VERSION) {
     $('abejaPunto').classList.remove('oculto');
     var av = document.createElement('div'); av.className = 'modal'; av.style.zIndex = 92;
-    var LI = [['✂', 'Recorta tus fotos', 'Al subir una foto, arrastra el dedo sobre lo que quieres quedarte. Y en cada carta tienes el botón ✂.'],
+    var LI = [['✂', 'Recorta tus fotos', 'Al subir una foto, pulsa «Automático» o arrastra el dedo sobre lo que quieres. Las hojas enteras y los PDF se cortan solos en cartas.'],
       ['🧩', 'Todo el vocabulario', 'Los 889 pictos del banco, abiertos y con buscador. Escribe la palabra, marca y juega o añádelos a tu material.'],
       ['✨', 'Crea material con IA', 'Escribe qué quieres trabajar, copia el encargo en ChatGPT o Claude, pega lo que te conteste y se crea solo, con sus pictos.'],
       ['🐝', 'La abeja siempre llega', 'Lo que escribas nos llega aunque cierres. Para pasarnos fotos o material, pega un enlace de OneDrive o Google Drive.']];
