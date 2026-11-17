@@ -23,7 +23,7 @@ var PREG = [
   ['¿Cómo veo cómo va cada persona?', 'Crea un perfil con un código (P-01), nunca con su nombre. Cada partida se apunta y el informe enseña aciertos, tiempos y ayudas. Se puede descargar.', 6],
   ['¿Dónde se guarda lo que hago?', 'En este navegador, y no sale de este aparato. El material se pasa a otro aparato con «Exportar»; los perfiles, con la copia de seguridad.', 0],
   ['¿Cómo hago una copia de seguridad de mis pacientes?', 'En «Perfil» pulsa «Guardar copia»: se descarga un archivo con todos los perfiles y sus sesiones, sin nombres. Guárdalo en tu ordenador o tu nube. Si cambias de tablet o se borra el navegador, pulsa «Recuperar copia» y elige ese archivo. Cada 5 sesiones te lo recordamos. Próximamente habrá guardado online opcional.', 6],
-  ['¿Puedo usar pictogramas?', 'Sí: en la portada está el «Banco de pictos ColmenIA», con 40 listos para jugar (animales, comida, ropa, acciones y emociones). Para mezclarlos con tus hojas, en «Editar material» pulsa «Pictos del banco». El banco entero tiene 889: si lo quieres, pídelo con la abeja.', 0]
+  ['¿Puedo usar pictogramas?', 'Sí: en la portada está el «Banco de pictos ColmenIA», con 40 listos para jugar (animales, comida, ropa, acciones y emociones). Para mezclarlos con tus hojas, en «Editar material» pulsa «Pictos del banco». El banco entero tiene 889 y está abierto: «Abrir el banco entero» tiene buscador.', 0]
 ];
 var CLAVES = [
   'empiezo empezar inicio primero probar ejemplo funciona',

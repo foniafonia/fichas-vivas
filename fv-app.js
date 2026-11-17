@@ -347,6 +347,11 @@ function cargaImagen(file, max, cb) {
   im.onerror = function () { URL.revokeObjectURL(url); alert('No se ha podido abrir esa imagen.'); cb(null); };
   im.src = url;
 }
+function reduce(cv, max) {
+  var k = Math.min(1, max / Math.max(cv.width, cv.height)); if (k === 1) return cv;
+  var o = document.createElement('canvas'); o.width = Math.round(cv.width * k); o.height = Math.round(cv.height * k);
+  var cx = o.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, o.width, o.height); cx.drawImage(cv, 0, 0, o.width, o.height); return o;
+}
 function palabraDeArchivo(n) { return String(n).replace(/\.[a-z0-9]+$/i, '').replace(/[_\-]+/g, ' ').replace(/\d+/g, '').replace(/\s+/g, ' ').trim(); }
 
 /* ===================== Editor ===================== */
@@ -373,6 +378,7 @@ function pintaEditor() {
       '<input type="text" data-k="cat" list="dlCats" value="' + esc(c.cat || '') + '" placeholder="categoría (opcional)" aria-label="Categoría">' +
       '<div class="mini"><button type="button" data-a="oir" title="Escuchar">🔊</button><button type="button" data-a="grabar" class="' + (c.audio ? 'hay' : '') + '" title="Grabar mi voz">🎤</button>' +
       (c.audio ? '<button type="button" data-a="quitaVoz" title="Quitar mi grabación">🎤✕</button>' : '') +
+      (c.img || c.pimg ? '<button type="button" data-a="recorta" title="Recortar la imagen">✂</button>' : '') +
       '<button type="button" data-a="act" title="Usar o no en los juegos">' + (c.activa === false ? '🙈' : '👁') + '</button>' +
       '<button type="button" data-a="sube" title="Mover antes">◀</button><button type="button" data-a="baja" title="Mover después">▶</button>' +
       '<button type="button" data-a="borra" title="Quitar carta">🗑</button></div></div>';
@@ -399,6 +405,7 @@ $('edCartas').addEventListener('click', function (e) {
   if (a === 'baja' && i < L.length - 1) { L.splice(i + 1, 0, L.splice(i, 1)[0]); }
   if (a === 'quitaVoz') { delete c.audio; }
   if (a === 'grabar') { graba(i, b); return; }
+  if (a === 'recorta') { var k2 = c.img ? 'img' : 'pimg'; FV.recorta(c[k2], function (cv) { if (!cv) return; c[k2] = aDataURL(reduce(cv, 480)); marcaCambio(); pintaEditor(); cuenta('foto_recortada'); }); return; }
   marcaCambio(); pintaEditor();
 });
 function graba(i, boton) {
@@ -435,7 +442,13 @@ function anadeSueltas(fs) {
   (function sig() {
     if (n >= fs.length) { marcaCambio(); pintaEditor(); cuenta('material_sueltas'); return; }
     var f = fs[n++];
-    cargaImagen(f, 480, function (cv) { if (cv) { var w = palabraDeArchivo(f.name); if (/^(img|image|dsc|whatsapp|foto|photo|captura|screenshot|pxl|imagen)\b/i.test(w)) w = ''; FV.set.cartas.push({ id: uid(), img: aDataURL(cv), texto: w, art: adivinaArt(w), activa: true }); } sig(); });
+    var conCorte = fs.length <= 5 && FV.recorta;
+    cargaImagen(f, conCorte ? 1600 : 480, function (cv) {
+      if (!cv) { sig(); return; }
+      var w = palabraDeArchivo(f.name); if (/^(img|image|dsc|whatsapp|foto|photo|captura|screenshot|pxl|imagen)\b/i.test(w)) w = '';
+      var mete = function (c2) { if (c2) FV.set.cartas.push({ id: uid(), img: aDataURL(reduce(c2, 480)), texto: w, art: adivinaArt(w), activa: true }); sig(); };
+      if (conCorte) FV.recorta(cv, mete); else mete(cv);
+    });
   })();
 }
 $('fEscena').addEventListener('change', function () {
@@ -691,18 +704,34 @@ function imprime(tipo) {
 /* ===================== Abeja: mejoras, novedades y fallos ===================== */
 (function () {
   var m = $('mejora'), ok = $('mejOk');
-  var CHIPS = [['juegos', 'Más juegos'], ['frases', 'Construir frases'], ['fonemas', 'Juegos por sonidos'], ['aire', 'Mejorar el modo aire'], ['voz', 'Más voces'], ['adultos', 'Más para adultos'], ['imprimir', 'Más cosas para imprimir'], ['nube', 'Guardar en la nube'], ['compartir', 'Banco de material compartido'], ['pictos', 'El banco entero de pictos']];
+  var CHIPS = [['juegos', 'Más juegos'], ['frases', 'Construir frases'], ['fonemas', 'Juegos por sonidos'], ['aire', 'Mejorar el modo aire'], ['voz', 'Más voces'], ['adultos', 'Más para adultos'], ['imprimir', 'Más cosas para imprimir'], ['nube', 'Guardar en la nube'], ['compartir', 'Banco de material compartido']];
   $('mejChips').innerHTML = CHIPS.map(function (c) { return '<button class="chip" type="button" data-m="' + c[0] + '" aria-pressed="false">' + c[1] + '</button>'; }).join('');
   $('novLista').innerHTML = FV_NOVEDADES.slice().reverse().map(function (n) { return '<li><b>' + esc(n.f) + ' · ' + esc(n.t) + '.</b> ' + esc(n.d) + '</li>'; }).join('');
   var visto = 0; try { visto = +localStorage.getItem('fv-nov-visto') || 0; } catch (e) {}
-  if (visto < FV_VERSION) $('abejaPunto').classList.remove('oculto');
+  if (visto < FV_VERSION) {
+    $('abejaPunto').classList.remove('oculto');
+    var ult = FV_NOVEDADES[0], av = document.createElement('div');
+    av.setAttribute('role', 'status');
+    av.style.cssText = 'position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:80;max-width:min(560px,calc(100% - 32px));background:var(--noche,#0E3524);color:#fff;border:3px solid var(--oro,#F2B33D);border-radius:16px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.25)';
+    av.innerHTML = '<b>🐝 Novedad: ' + esc(ult.t) + '</b><div class="fila" style="margin-top:8px"><button class="btn oro peq" type="button" data-av="ver">Ver qué hay nuevo</button><button class="btn sec peq" type="button" data-av="x">Luego</button></div>';
+    av.addEventListener('click', function (e) { var b = e.target.closest('[data-av]'); if (!b) return; av.remove(); if (b.dataset.av === 'ver') abre(); });
+    setTimeout(function () { document.body.appendChild(av); }, 1200);
+  }
   function pest(p) { m.querySelectorAll('[data-p]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.p === p); }); m.querySelectorAll('[data-pp]').forEach(function (d) { d.classList.toggle('oculto', d.dataset.pp !== p); }); ok.textContent = ''; if (p === 'nov') { try { localStorage.setItem('fv-nov-visto', FV_VERSION); } catch (e) {} $('abejaPunto').classList.add('oculto'); cuenta('novedades'); } }
   m.querySelector('.pest').addEventListener('click', function (e) { var b = e.target.closest('[data-p]'); if (b) pest(b.dataset.p); });
   function abre() { m.classList.remove('oculto'); ok.textContent = ''; cuenta('mejora_abrir'); pest(visto < FV_VERSION ? 'nov' : 'pide'); }
   $('abeja').addEventListener('click', abre);
   FV.abreAbeja = function (msg) { abre(); pest('pide'); if (msg) ok.textContent = msg; };
-  $('mejX').addEventListener('click', function () { m.classList.add('oculto'); });
-  m.addEventListener('click', function (e) { if (e.target === m) m.classList.add('oculto'); });
+  function cierra() {
+    var pend = ['mejTxt', 'falTxt'].filter(function (id) { return $(id) && $(id).value.trim(); })[0];
+    if (pend && !$('mejEnvia').disabled && confirm('Tienes un mensaje escrito sin enviar. ¿Lo enviamos al equipo?')) {
+      pest(pend === 'falTxt' ? 'fallo' : 'pide'); $('mejEnvia').click(); cuenta('buzon_al_cerrar');
+      setTimeout(function () { m.classList.add('oculto'); }, 1800); return;
+    }
+    m.classList.add('oculto');
+  }
+  $('mejX').addEventListener('click', cierra);
+  m.addEventListener('click', function (e) { if (e.target === m) cierra(); });
   $('mejChips').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b || b.getAttribute('aria-pressed') === 'true') return; b.setAttribute('aria-pressed', 'true'); cuenta('mejora_' + b.dataset.m); cuenta('mejora_total'); ok.textContent = 'Voto sumado. Lo más votado es lo siguiente que hacemos.'; });
   function limpia(t) { return (t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z ]/g, '').trim().replace(/ +/g, '_').slice(0, 40); }
   var FALLOS = [['no_suena', 'No se oye la voz'], ['hoja', 'La hoja no se corta bien'], ['zonas', 'Las zonas de la escena no coinciden'], ['cuelga', 'Se queda colgado'], ['aire', 'El modo aire no va'], ['imprimir', 'No imprime'], ['otro', 'Otra cosa']];

@@ -1,9 +1,10 @@
 /* Fichas vivas · datos del material de ejemplo, frases con voz y novedades.
    Material de ejemplo: hojas de una compañera logopeda (mascotas y aseo), cortadas
    en cartas. Voz: Ximena (Microsoft, es-ES-XimenaNeural) en demo/voz. */
-var FV_VERSION = 4;
+var FV_VERSION = 5;
 
 var FV_NOVEDADES = [
+  { v: 5, f: '17 nov 2026', t: 'Lo que pidió Almudena: recortar fotos y todo el vocabulario', d: 'Al subir una foto puedes recortarla arrastrando el dedo, y en cada carta hay un botón ✂ para recortarla después. El banco de pictos está entero abierto: 889 pictogramas con buscador para jugar o añadirlos a tu material. Y si cierras la abeja con algo escrito, te pregunta si lo envía.' },
   { v: 4, f: '11 nov 2026', t: 'Banco de pictos ColmenIA', d: '40 pictogramas propios para jugar ya (animales, comida, ropa, acciones y emociones) o añadir a tu material. El banco entero tiene 889: si lo quieres, pídelo con la abeja.' },
   { v: 3, f: '11 nov 2026', t: 'Ayuda, vídeos y copia de seguridad', d: 'Botón «Ayuda» con preguntas y 6 vídeos de un minuto. En «Perfiles», copia de seguridad: guarda en un archivo todos los perfiles y sus sesiones, y recupéralos en otro aparato. Próximamente: guardado online opcional para tenerlo en todos tus aparatos.' },
   { v: 2, f: '11 nov 2026', t: 'Más material de Almudena', d: 'Sonido /k/ con dos escenas, el cuerpo humano (cara, cuerpo y por dentro), el pelo, la piel y razas de perro. Máscaras para niños y para adultos. Videotutoriales.' },
