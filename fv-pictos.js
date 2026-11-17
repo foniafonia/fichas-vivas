@@ -45,7 +45,7 @@ function selector(modo) {
   document.body.appendChild(m);
   var bus = m.querySelector('.bp-bus'), gr = '', labels = [].slice.call(m.querySelectorAll('.bp-pick label'));
   function filtra() { var q = norm(bus.value.trim()); labels.forEach(function (l) { l.style.display = (!gr || l.dataset.g === gr) && (!q || l.dataset.n.indexOf(q) > -1) ? '' : 'none'; }); }
-  function cuenta() { m.querySelector('[data-cuantos]').textContent = m.querySelectorAll('.bp-pick input:checked:not(:disabled)').length + ' marcados'; }
+  function cuenta() { var n = m.querySelectorAll('.bp-pick input:checked:not(:disabled)').length; m.querySelector('[data-cuantos]').textContent = n + (n === 1 ? ' marcado' : ' marcados'); }
   bus.addEventListener('input', filtra); setTimeout(function () { bus.focus(); }, 50);
   m.addEventListener('change', cuenta);
   m.addEventListener('click', function (e) {

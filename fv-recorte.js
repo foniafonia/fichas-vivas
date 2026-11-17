@@ -4,7 +4,7 @@
 'use strict';
 var FV = window.FV;
 var css = document.createElement('style');
-css.textContent = '.rc-wrap{position:relative;display:inline-block;touch-action:none;user-select:none;max-width:100%}' +
+css.textContent = '.rc-wrap{position:relative;display:inline-block;touch-action:none;user-select:none;max-width:100%;overflow:hidden;border-radius:10px}' +
   '.rc-wrap canvas{display:block;max-width:100%;max-height:62vh;border-radius:10px}' +
   '.rc-sel{position:absolute;border:3px dashed var(--oro,#F2B33D);box-shadow:0 0 0 9999px rgba(14,53,36,.55);pointer-events:none}';
 document.head.appendChild(css);
