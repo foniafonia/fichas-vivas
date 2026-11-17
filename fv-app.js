@@ -725,7 +725,11 @@ function imprime(tipo) {
       if (b && b.dataset.av === 'ia' && FV.abreIA) FV.abreIA('nuevo');
       if (b && b.dataset.av === 'banco' && FV.abreBanco) FV.abreBanco('jugar');
     });
-    setTimeout(function () { document.body.appendChild(av); }, 900);
+    (function espera(n) {
+      var sel = document.getElementById('selectorPublico');
+      if (sel && !sel.classList.contains('oculto') && n < 600) { setTimeout(function () { espera(n + 1); }, 500); return; }
+      setTimeout(function () { document.body.appendChild(av); }, 600);
+    })(0);
   }
   function pest(p) { m.querySelectorAll('[data-p]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.p === p); }); m.querySelectorAll('[data-pp]').forEach(function (d) { d.classList.toggle('oculto', d.dataset.pp !== p); }); ok.textContent = ''; if (p === 'nov') { try { localStorage.setItem('fv-nov-visto', FV_VERSION); } catch (e) {} $('abejaPunto').classList.add('oculto'); cuenta('novedades'); } }
   m.querySelector('.pest').addEventListener('click', function (e) { var b = e.target.closest('[data-p]'); if (b) pest(b.dataset.p); });
