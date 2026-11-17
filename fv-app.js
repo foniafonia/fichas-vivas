@@ -710,25 +710,71 @@ function imprime(tipo) {
   var visto = 0; try { visto = +localStorage.getItem('fv-nov-visto') || 0; } catch (e) {}
   if (visto < FV_VERSION) {
     $('abejaPunto').classList.remove('oculto');
-    var ult = FV_NOVEDADES[0], av = document.createElement('div');
-    av.setAttribute('role', 'status');
-    av.style.cssText = 'position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:80;max-width:min(560px,calc(100% - 32px));background:var(--noche,#0E3524);color:#fff;border:3px solid var(--oro,#F2B33D);border-radius:16px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.25)';
-    av.innerHTML = '<b>🐝 Novedad: ' + esc(ult.t) + '</b><div class="fila" style="margin-top:8px"><button class="btn oro peq" type="button" data-av="ver">Ver qué hay nuevo</button><button class="btn sec peq" type="button" data-av="x">Luego</button></div>';
-    av.addEventListener('click', function (e) { var b = e.target.closest('[data-av]'); if (!b) return; av.remove(); if (b.dataset.av === 'ver') abre(); });
-    setTimeout(function () { document.body.appendChild(av); }, 1200);
+    var av = document.createElement('div'); av.className = 'modal'; av.style.zIndex = 92;
+    var LI = [['✂', 'Recorta tus fotos', 'Al subir una foto, arrastra el dedo sobre lo que quieres quedarte. Y en cada carta tienes el botón ✂.'],
+      ['🧩', 'Todo el vocabulario', 'Los 889 pictos del banco, abiertos y con buscador. Escribe la palabra, marca y juega o añádelos a tu material.'],
+      ['✨', 'Crea material con IA', 'Escribe qué quieres trabajar, copia el encargo en ChatGPT o Claude, pega lo que te conteste y se crea solo, con sus pictos.'],
+      ['🐝', 'La abeja siempre llega', 'Lo que escribas nos llega aunque cierres. Y puedes mandarnos imágenes.']];
+    av.innerHTML = '<div class="panel" style="max-width:600px" role="dialog" aria-label="Novedades"><h2 style="margin-top:0">🐝 ¡Novedades en Fichas vivas!</h2><p style="margin:0 0 10px">Hemos hecho lo que nos pediste:</p>' +
+      LI.map(function (x) { return '<div style="display:flex;gap:12px;align-items:flex-start;background:#fff;border:2px solid #e6dcc8;border-radius:14px;padding:10px 12px;margin:8px 0"><span style="font-size:28px;line-height:1">' + x[0] + '</span><div><b style="font-size:18px">' + esc(x[1]) + '</b><div>' + esc(x[2]) + '</div></div></div>'; }).join('') +
+      '<div class="fila" style="margin-top:12px"><button class="btn oro" type="button" data-av="ia">✨ Probar a crear con IA</button><button class="btn" type="button" data-av="banco">🧩 Ver el banco</button><button class="btn sec" type="button" data-av="x">Entendido</button></div></div>';
+    function vista() { try { localStorage.setItem('fv-nov-visto', FV_VERSION); } catch (e) {} $('abejaPunto').classList.add('oculto'); cuenta('novedades_v' + FV_VERSION); }
+    av.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-av]'); if (!b && e.target !== av) return;
+      av.remove(); vista();
+      if (b && b.dataset.av === 'ia' && FV.abreIA) FV.abreIA('nuevo');
+      if (b && b.dataset.av === 'banco' && FV.abreBanco) FV.abreBanco('jugar');
+    });
+    setTimeout(function () { document.body.appendChild(av); }, 900);
   }
   function pest(p) { m.querySelectorAll('[data-p]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.p === p); }); m.querySelectorAll('[data-pp]').forEach(function (d) { d.classList.toggle('oculto', d.dataset.pp !== p); }); ok.textContent = ''; if (p === 'nov') { try { localStorage.setItem('fv-nov-visto', FV_VERSION); } catch (e) {} $('abejaPunto').classList.add('oculto'); cuenta('novedades'); } }
   m.querySelector('.pest').addEventListener('click', function (e) { var b = e.target.closest('[data-p]'); if (b) pest(b.dataset.p); });
   function abre() { m.classList.remove('oculto'); ok.textContent = ''; cuenta('mejora_abrir'); pest(visto < FV_VERSION ? 'nov' : 'pide'); }
   $('abeja').addEventListener('click', abre);
   FV.abreAbeja = function (msg) { abre(); pest('pide'); if (msg) ok.textContent = msg; };
-  function cierra() {
-    var pend = ['mejTxt', 'falTxt'].filter(function (id) { return $(id) && $(id).value.trim(); })[0];
-    if (pend && !$('mejEnvia').disabled && confirm('Tienes un mensaje escrito sin enviar. ¿Lo enviamos al equipo?')) {
-      pest(pend === 'falTxt' ? 'fallo' : 'pide'); $('mejEnvia').click(); cuenta('buzon_al_cerrar');
-      setTimeout(function () { m.classList.add('oculto'); }, 1800); return;
-    }
-    m.classList.add('oculto');
+  /* Lo escrito se envía siempre: al cerrar la abeja y al salir de la página. */
+  function pendiente() {
+    var fallo = $('falTxt') && $('falTxt').value.trim(), mej = $('mejTxt') && $('mejTxt').value.trim();
+    return { fallo: fallo, mej: mej, hay: !!(fallo || mej || imgs.length) };
+  }
+  function enviaPendiente(motivo) {
+    var p = pendiente(); if (!p.hay || $('mejEnvia').disabled) return;
+    var firma = $('mejFirma').value.trim().slice(0, 60);
+    if (p.mej) { FV.enviaBuzon('mejora (' + motivo + ')', p.mej, firma); $('mejTxt').value = ''; }
+    if (p.fallo) { FV.enviaBuzon('algo no va (' + motivo + ')', p.fallo, firma); $('falTxt').value = ''; }
+    mandaImgs(firma, motivo); cuenta('buzon_' + motivo);
+  }
+  function cierra() { enviaPendiente('al_cerrar'); m.classList.add('oculto'); }
+  window.addEventListener('pagehide', function () { enviaPendiente('al_salir'); });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') enviaPendiente('al_salir'); });
+  /* Imágenes: cada una, reducida, va en su propio mensaje (el buzón admite 16 KB por mensaje). */
+  var imgs = [];
+  function miniatura(file, cb) {
+    var url = URL.createObjectURL(file), im = new Image();
+    im.onload = function () {
+      var max = 520, q = .7, u = '';
+      for (var vuelta = 0; vuelta < 12; vuelta++) {
+        var k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight)), cv = document.createElement('canvas');
+        cv.width = Math.round(im.naturalWidth * k); cv.height = Math.round(im.naturalHeight * k);
+        var cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(im, 0, 0, cv.width, cv.height);
+        u = cv.toDataURL('image/webp', q); if (u.indexOf('data:image/webp') !== 0) u = cv.toDataURL('image/jpeg', q);
+        if (u.length < 11500) break;
+        if (q > .35) q -= .12; else max = Math.round(max * .8);
+      }
+      URL.revokeObjectURL(url); cb(u.length < 11500 ? u : null);
+    };
+    im.onerror = function () { URL.revokeObjectURL(url); cb(null); };
+    im.src = url;
+  }
+  function pintaImgs() { $('mejImgs').innerHTML = imgs.map(function (u, i) { return '<span style="position:relative;display:inline-block"><img src="' + u + '" alt="" style="height:64px;border-radius:8px;border:2px solid #e6dcc8"><button type="button" data-qi="' + i + '" class="btn sec peq" style="position:absolute;top:-8px;right:-8px;min-height:0;padding:0 6px" aria-label="Quitar imagen">✕</button></span>'; }).join(''); }
+  $('mejImg').addEventListener('change', function () {
+    var fs = [].slice.call(this.files, 0, 3 - imgs.length); this.value = '';
+    fs.forEach(function (f) { miniatura(f, function (u) { if (u && imgs.length < 3) { imgs.push(u); pintaImgs(); } else if (!u) ok.textContent = 'Esa imagen no se ha podido preparar.'; }); });
+  });
+  $('mejImgs').addEventListener('click', function (e) { var b = e.target.closest('[data-qi]'); if (b) { imgs.splice(+b.dataset.qi, 1); pintaImgs(); } });
+  function mandaImgs(firma, motivo) {
+    if (!imgs.length) return; var L = imgs.slice(); imgs = []; pintaImgs();
+    L.forEach(function (u, i) { FV.enviaBuzon('imagen ' + (i + 1) + ' de ' + L.length + (motivo ? ' (' + motivo + ')' : ''), u, firma); });
   }
   $('mejX').addEventListener('click', cierra);
   m.addEventListener('click', function (e) { if (e.target === m) cierra(); });
@@ -750,7 +796,7 @@ function imprime(tipo) {
   FV.enviaBuzon = function (tipo, txt, firma, cb) {
     var v = ['inicio', 'juegos', 'editar', 'biblioteca'].filter(function (x) { var e = $('v-' + x); return e && !e.classList.contains('oculto'); })[0] || '';
     var c = { id: 'c0000-fv-' + uid(), caso: '0000', terapeuta: '', material: 'comentario', version: 'fichas-vivas',
-      contenido: 'FICHAS VIVAS · ' + tipo.toUpperCase() + '\n' + (firma ? 'De: ' + firma + '\n' : '') + 'Pantalla: ' + v + (FV.set ? ' · material «' + FV.set.titulo + '»' : '') + '\nAparato: ' + navigator.userAgent.slice(0, 160) + '\n\n' + String(txt).slice(0, 2000) + '\n\nSin datos de pacientes.' };
+      contenido: 'FICHAS VIVAS · ' + tipo.toUpperCase() + '\n' + (firma ? 'De: ' + firma + '\n' : '') + 'Pantalla: ' + v + (FV.set ? ' · material «' + FV.set.titulo + '»' : '') + '\nAparato: ' + navigator.userAgent.slice(0, 160) + '\n\n' + String(txt).slice(0, /^imagen/.test(tipo) ? 12000 : 2000) + '\n\nSin datos de pacientes.' };
     manda(c, function (bien) { if (!bien) ponCola(leeCola().concat([c])); cuenta(bien ? 'buzon_ok' : 'buzon_cola'); if (cb) cb(bien); });
   };
   setTimeout(reintenta, 3000); window.addEventListener('online', reintenta);
@@ -758,7 +804,9 @@ function imprime(tipo) {
     var fallo = !m.querySelector('[data-pp="fallo"]').classList.contains('oculto');
     var ta = $(fallo ? 'falTxt' : 'mejTxt'), t = ta.value.trim();
     var chips = [].map.call(m.querySelectorAll((fallo ? '#falChips' : '#mejChips') + ' [aria-pressed="true"]'), function (b) { return b.textContent; });
-    if (!t && !chips.length) { ok.textContent = 'Escribe algo o toca una opción.'; ta.focus(); return; }
+    if (!t && !chips.length && !imgs.length) { ok.textContent = 'Escribe algo, toca una opción o añade una imagen.'; ta.focus(); return; }
+    if (!t && !chips.length) { mandaImgs($('mejFirma').value.trim().slice(0, 60)); ok.textContent = '¡Recibido! Nos han llegado tus imágenes. Gracias 🐝'; return; }
+    mandaImgs($('mejFirma').value.trim().slice(0, 60));
     var b = $('mejEnvia'); b.disabled = true; ok.textContent = 'Enviando…';
     FV.enviaBuzon(fallo ? 'algo no va' : 'mejora', (chips.length ? 'Marcó: ' + chips.join(', ') + '\n' : '') + t, $('mejFirma').value.trim().slice(0, 60), function (bien) {
       b.disabled = false; if (bien) ta.value = '';

@@ -23,6 +23,8 @@ var PREG = [
   ['¿Cómo veo cómo va cada persona?', 'Crea un perfil con un código (P-01), nunca con su nombre. Cada partida se apunta y el informe enseña aciertos, tiempos y ayudas. Se puede descargar.', 6],
   ['¿Dónde se guarda lo que hago?', 'En este navegador, y no sale de este aparato. El material se pasa a otro aparato con «Exportar»; los perfiles, con la copia de seguridad.', 0],
   ['¿Cómo hago una copia de seguridad de mis pacientes?', 'En «Perfil» pulsa «Guardar copia»: se descarga un archivo con todos los perfiles y sus sesiones, sin nombres. Guárdalo en tu ordenador o tu nube. Si cambias de tablet o se borra el navegador, pulsa «Recuperar copia» y elige ese archivo. Cada 5 sesiones te lo recordamos. Próximamente habrá guardado online opcional.', 6],
+  ['¿Cómo creo material con IA?', 'Pulsa «✨ Crear con IA». 1) Escribe qué quieres trabajar (por ejemplo, ropa de invierno para 6 años). 2) Pulsa «Copiar y abrir ChatGPT» o «Claude», pega el encargo allí y envíalo. 3) Copia lo que te conteste, pégalo en el paso 3 y pulsa «Crear mi material». Las palabras que están en el banco salen con su picto; a las demás puedes ponerles una foto.', 0],
+  ['¿Puedo recortar una foto?', 'Sí. Al subir una foto se abre el recorte: arrastra el dedo sobre la parte que quieres. En «Editar material», cada carta tiene el botón ✂ para recortarla después.', 0],
   ['¿Puedo usar pictogramas?', 'Sí: en la portada está el «Banco de pictos ColmenIA», con 40 listos para jugar (animales, comida, ropa, acciones y emociones). Para mezclarlos con tus hojas, en «Editar material» pulsa «Pictos del banco». El banco entero tiene 889 y está abierto: «Abrir el banco entero» tiene buscador.', 0]
 ];
 var CLAVES = [
@@ -36,6 +38,8 @@ var CLAVES = [
   'perfil perfiles informe progreso resultados medir aciertos evolucion paciente codigo registro',
   'guardar guarda datos privacidad borrar aparato navegador movil',
   'copia seguridad backup perder perdido recuperar pacientes nube online tablet cambiar',
+  'ia inteligencia artificial chatgpt claude gpt crear generar json encargo pegar automatico',
+  'recortar recorte recorto cortar foto fotos imagen trozo parte',
   'picto pictos pictograma pictogramas banco dibujos arasaac imagenes'
 ];
 function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9ñ ]/g, ' '); }
